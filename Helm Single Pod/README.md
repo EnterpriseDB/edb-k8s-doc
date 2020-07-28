@@ -34,6 +34,7 @@ For more details see the official k8s doc [here](https://kubernetes.io/docs/task
 
 ## 8. Deploy Container 
 Use the yaml files in the examples directory for your desired deployment.
+
 NOTE: For a complete list of available options in the yaml file, see charts/edb/values.yaml
 
 - EDB Postgres Advanced Server v11 with redwood mode:
