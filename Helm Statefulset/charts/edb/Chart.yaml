@@ -1,0 +1,19 @@
+apiVersion: v1
+name: edb
+version: 3.0.0
+appVersion: 3.0.0
+description: EDB Postgres on Kubernetes - Release 3.0
+home: https://www.enterprisedb.com/
+icon: https://www.enterprisedb.com/themes/edb/favicon.ico
+keywords:
+- EDB postgres
+- postgresql
+- database
+- sql
+- Advanced Server
+- EDB
+- amd64
+maintainers:
+- email: sales@enterprisedb.com
+  name: EnterpriseDB
+  url: https://www.enterprisedb.com/

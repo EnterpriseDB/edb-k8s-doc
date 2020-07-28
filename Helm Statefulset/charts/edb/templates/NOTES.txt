@@ -1,0 +1,10 @@
+
+Your Release is named {{ .Release.Name | quote }}
+
+This deployment will install a single database pod in a single k8s cluster.
+
+Because this deployment type will not provide data redundancy, it is not recommended for production use.
+
+Please utilize the statefulset deployment with replicas set more than 1 if redundancy is desired.
+
+For further details, refer to the README.md

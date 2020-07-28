@@ -41,7 +41,7 @@ NOTE: For a complete list of available options in the yaml file, see charts/edb/
         helm template charts/edb -f examples/epas_v11_redwood_single.yaml | kubectl apply -f -
  
 
-## 8. Verify Deployment
+## 9. Verify Deployment
     kubectl get pods
 
 For EDB Postgres Advanced Server v11, the output from the command above if deployment is successful:
@@ -50,7 +50,7 @@ For EDB Postgres Advanced Server v11, the output from the command above if deplo
     edb-epas-v11-redwood-single   1/1     Running   0          2m7s
 
 
-## 9. Use Postgres
+## 10. Use Postgres
 
 - Open a shell into the container:
 
