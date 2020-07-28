@@ -1,7 +1,7 @@
 # Deploy Postgres Containers Using Docker Command Line
-Deploy community Postgres and EPAS containers from the docker command line using the steps below.
+Deploy PostgreSQL and EDB Postgres Advanced Server containers from the Docker command line using the steps below.
 
-## 1. Install docker
+## 1. Install Docker
 a. windows/mac: install [docker desktop](https://www.docker.com/products/docker-desktop)
 
 b. Linux(CentOS/RHEL):
@@ -21,7 +21,7 @@ b. Linux(CentOS/RHEL):
     docker login quay.io -u <your-quay.io-username> -p <your-quay.io-password>
 
 ## 4. Download Postgres Images
-- Download community and EPAS (v11) Postgres images from quay.io
+- Download PostgreSQL and EDB Postgres Advanced Server Postgres images from quay.io
 
         docker pull quay.io/enterprisedb/postgresql11:latest
         docker pull quay.io/enterprisedb/postgres11-advanced-server:latest
@@ -42,25 +42,25 @@ a. Deployment options are provided as environment variables:
 | USE_SECRET           | false                      | Use default Postgres user and password if set to false|
 | PGDATA               | /var/lib/edb/data          | Postgres data directory   |
 | PGDATA_WAL           | /var/lib/edb/wal           | Postgres wal directory    |
-| PGDATA_ARCHIVE       | /var/lib/edb/wal_archive   | Postgres archive wal dir  |
+| PGDATA_ARCHIVE       | /var/lib/edb/wal_archive   | Postgres wal archive directory  |
 | CHARSET              | UTF8                       | Character set             |
 | NO_REDWOOD_COMPAT    | false                      | Redwood mode for EPAS     |
 
 b. Deployment examples:
 
-- with all default options (community postgres v11)
+- PostgreSQL with all default options (v11 shown)
 
         docker run --name EDB-Postgres -d quay.io/enterprisedb/postgresql11:latest /launch.sh
  
- - with all user-defined username/password options (community postgres v11)
+ - PostgreSQL with all user-defined username/password options (v11 shown)
 
         docker run --name EDB-Postgres -e USE_SECRET=true -e PG_USER=<postgres-user> -e PG_PASSWORD=<postgres-password> -d quay.io/enterprisedb/postgresql11:latest /launch.sh
 
- - with redwood mode off (EPAS v11)
+ - EDB Postgres Advanced Server with redwood mode off (v11 shown)
 
         docker run --name EDB-Postgres -e NO_REDWOOD_COMPAT=true -d quay.io/enterprisedb/postgres11-advanced-server:latest /launch.sh
 
-- with persistent volume for data (community postgres v11)
+- PostgreSQL with persistent volume for data (v11 shown)
         
     i. create local data directory
 
