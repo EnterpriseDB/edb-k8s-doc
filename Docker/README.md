@@ -2,16 +2,17 @@
 Deploy PostgreSQL and EDB Postgres Advanced Server containers from the Docker command line using the steps below.
 
 ## 1. Install Docker
-a. windows/mac: install [docker desktop](https://www.docker.com/products/docker-desktop)
+a. Windows/macOS: install [docker desktop](https://www.docker.com/products/docker-desktop)
 
 b. Linux(CentOS/RHEL):
 
     sudo yum install -y docker
+    
+    # Manage Docker as a non-root user
     sudo groupadd docker
     sudo usermod -aG docker $USER
     sudo systemctl enable docker
     sudo systemctl start docker
-
 
 ## 2. Verify docker version
 
