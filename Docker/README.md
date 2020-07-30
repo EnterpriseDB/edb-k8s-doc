@@ -15,8 +15,8 @@ Deploy PostgreSQL and EDB Postgres Advanced Server containers from the Docker co
 ## 4. Download Postgres Images
 - Download PostgreSQL and EDB Postgres Advanced Server Postgres images from quay.io
 
-        docker pull quay.io/enterprisedb/postgresql11:latest
-        docker pull quay.io/enterprisedb/postgres11-advanced-server:latest
+        docker pull quay.io/edb/postgresql-11:latest
+        docker pull quay.io/edb/postgres-advanced-server-11:latest
 
 
 - Confirm downloaded image(s):
