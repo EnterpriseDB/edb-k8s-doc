@@ -2,19 +2,10 @@
 Deploy PostgreSQL and EDB Postgres Advanced Server containers from the Docker command line using the steps below.
 
 ## 1. Install Docker
-a. Windows/macOS: install [docker desktop](https://www.docker.com/products/docker-desktop)
+    For Windows/macOS, installing [Docker Desktop](https://www.docker.com/products/docker-desktop) is recommended
 
-b. Linux(CentOS/RHEL):
 
-    sudo yum install -y docker
-    
-    # Manage Docker as a non-root user
-    sudo groupadd docker
-    sudo usermod -aG docker $USER
-    sudo systemctl enable docker
-    sudo systemctl start docker
-
-## 2. Verify docker version
+## 2. Verify Docker Version
 
     docker version
 
@@ -51,15 +42,15 @@ b. Deployment examples:
 
 - PostgreSQL with all default options (v11 shown)
 
-        docker run --name EDB-Postgres -d quay.io/enterprisedb/postgresql11:latest /launch.sh
+        docker run --name EDB-Postgres -d quay.io/edb/postgresql-11:latest /launch.sh
  
  - PostgreSQL with all user-defined username/password options (v11 shown)
 
-        docker run --name EDB-Postgres -e USE_SECRET=true -e PG_USER=<postgres-user> -e PG_PASSWORD=<postgres-password> -d quay.io/enterprisedb/postgresql11:latest /launch.sh
+        docker run --name EDB-Postgres -e USE_SECRET=true -e PG_USER=<postgres-user> -e PG_PASSWORD=<postgres-password> -d quay.io/edb/postgresql-11:latest /launch.sh
 
  - EDB Postgres Advanced Server with redwood mode off (v11 shown)
 
-        docker run --name EDB-Postgres -e NO_REDWOOD_COMPAT=true -d quay.io/enterprisedb/postgres11-advanced-server:latest /launch.sh
+        docker run --name EDB-Postgres -e NO_REDWOOD_COMPAT=true -d quay.io/edb/postgres-advanced-server-11:latest /launch.sh
 
 - PostgreSQL with persistent volume for data (v11 shown)
         
@@ -69,7 +60,7 @@ b. Deployment examples:
     
     ii. deploy container
 
-        docker run --name EDB-Postgres -e PGDATA=/data -v <local-data-directory>:/data -d quay.io/enterprisedb/postgresql11:latest /launch.sh
+        docker run --name EDB-Postgres -e PGDATA=/data -v <local-data-directory>:/data -d quay.io/edb/postgresql-11:latest /launch.sh
         
 c. Verify deployment:
        
