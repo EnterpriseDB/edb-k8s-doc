@@ -5,7 +5,7 @@ Use the steps below to validate the deployment of PostgreSQL and EDB Postgres Ad
 ## Verify Deployment
     kubectl get pods
 
-If deployment is successful, the output of the command above  for EDB Postgres Advanced Server v11 is shown below:
+If deployment is successful, the output of the command above for EDB Postgres Advanced Server v11 is shown below:
 
 Single Pod:
 

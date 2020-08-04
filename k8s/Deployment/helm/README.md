@@ -18,17 +18,25 @@ Use the yaml files in the examples directory for your desired deployment.
 
 ### Deploy Container As A Single POd
 
-- Deploy EDB Postgres Advanced Server v11 with redwood mode:
+- Deploy EDB Postgres Advanced Server v11 with no redwood mode:
 
-        helm install epas-v11-redwood-single SinglePod/charts/edb -f SinglePod/examples/epas_v11_redwood_single.yaml
+        helm install epas-v11-noredwood-single SinglePod/charts/postgresql -f SinglePod/examples/values-epas_v11_noredwood_single.yaml
  
+- Deploy Community Postgres v11:
+
+        helm install pg-v11-single SinglePod/charts/postgresql -f SinglePod/examples/values-pg_v11_single.yaml
 
 ### Deploy Container As A StatefulSet
 
-- Deploy EDB Postgres Advanced Server v11 with redwood mode:
+- Deploy EDB Postgres Advanced Server v11 with no redwood mode:
 
-        helm install epas-v11-redwood-statefulset Statefulset/charts/edb -f Statefulset/examples/epas_v11_redwood_statefulset.yaml
+        helm install epas-v11-noredwood-statefulset Statefulset/charts/postgresql -f Statefulset/examples/values-epas_v11_noredwood_statefulset.yaml
  
+
+
+- Deploy Community Postgres v11:
+
+        helm install pg-v11-statefulset Statefulset/charts/postgresql -f Statefulset/examples/values-pg_v11_statefulset.yaml
 
 NOTE: For a complete list of available options in the yaml file, see charts/edb/values.yaml
 

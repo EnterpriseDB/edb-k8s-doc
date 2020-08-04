@@ -1,12 +1,12 @@
 apiVersion: v1
-name: edb
+name: postgresql
 version: 3.0.0
 appVersion: 3.0.0
 description: EDB Postgres on Kubernetes - Release 3.0
 home: https://www.enterprisedb.com/
 icon: https://www.enterprisedb.com/themes/edb/favicon.ico
 keywords:
-- EDB postgres
+- postgres
 - postgresql
 - database
 - sql
