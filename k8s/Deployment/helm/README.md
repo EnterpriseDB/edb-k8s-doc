@@ -25,10 +25,6 @@ Use the yaml files in the examples directory for your desired deployment.
 
 ### Deploy Container As A StatefulSet
 
-- Create configmap for custom configs
-
-        kubectl apply -f Statefulset/configmap.yaml
-
 - Deploy EDB Postgres Advanced Server v11 with redwood mode:
 
         helm install epas-v11-redwood-statefulset Statefulset/charts/edb -f Statefulset/examples/epas_v11_redwood_statefulset.yaml

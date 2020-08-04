@@ -1,0 +1,117 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: edb-epas10-redwood
+  name: edb-epas-v10-redwood
+spec:
+  type: ClusterIP
+  ports:
+  - name: postgres
+    port: 5444
+    protocol: TCP
+    targetPort: 5444
+  selector:
+    app: edb-epas10-redwood
+    statefulset.kubernetes.io/pod-name: edb-epas-v10-redwood-0
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: edb-epas-v10-redwood
+spec:
+  selector:
+    matchLabels:
+      app: edb-epas10-redwood
+  serviceName: edb-epas-v10-redwood
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: edb-epas10-redwood
+    spec:
+      serviceAccountName: edb
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: edb-database
+          image: "quay.io/enterprisedb/postgres10-advanced-server:latest"
+          imagePullPolicy: Always
+          command: ["/bin/bash"]
+          args: ["-ec", "/police.sh && /launch.sh"]
+          env:
+            - name: PG_USER
+              value: enterprisedb
+            - name: PG_PASSWORD
+              value: edb
+            - name: PGDATA
+              value: /var/lib/edb/data
+            - name: PGDATA_WAL
+              value: /var/lib/edb/wal
+            - name: PGDATA_ARCHIVE
+              value: /var/lib/edb/wal_archive
+            - name: USE_CONFIGMAP
+              value: "true"
+            - name: NO_REDWOOD_COMPAT
+              value: "false"
+            - name: CHARSET
+              value: UTF8
+          ports:
+            - name: postgres
+              containerPort: 5444
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 5444
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 5444
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 2
+            requests:
+              memory: 500Mi
+              cpu: 1
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/edb/data
+            - name: wal
+              mountPath: /var/lib/edb/wal
+            - name: walarchive
+              mountPath: /var/lib/edb/wal_archive
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: edb-db-custom-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+    - metadata:
+        name: wal
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+    - metadata:
+        name: walarchive
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

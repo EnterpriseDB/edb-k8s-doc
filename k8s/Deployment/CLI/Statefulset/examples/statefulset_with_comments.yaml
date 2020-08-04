@@ -1,0 +1,156 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    # Use the same label for all parts of the application.
+    app: edb-epas12-noredwood
+  # The name of the service. Can be different than the name of the statefulset.
+  name: edb-epas-v12-noredwood
+spec:
+  # Can be changed to allow for external trafic.
+  # As an alternative for external connectivity look at Jaeger or Traefik.
+  type: ClusterIP
+  ports:
+  - name: postgres
+    # Change this to have the service listen on another port.
+    port: 5444
+    protocol: TCP
+    # For PostgreSQL statefulsets, set this to 5432.
+    targetPort: 5444
+  selector:
+    # Must conform to the label of the statefulset.
+    app: edb-epas12-noredwood
+    # Forward trafic to pod-0 only.
+    statefulset.kubernetes.io/pod-name: edb-epas-v12-noredwood-0
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  # The name of the statefulset. Can be different than the name of the service.
+  name: edb-epas-v12-noredwood
+spec:
+  selector:
+    matchLabels:
+      # Needs to conform to the label of the statefulset.
+      app: edb-epas12-noredwood
+  # Must point to the name of the service defined earlier.
+  serviceName: edb-epas-v12-noredwood
+  # Defines the number of pods in the statefulset. Default is 1.
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # Use the same label for all parts of the application.
+        app: edb-epas12-noredwood
+    spec:
+      # The service account used for deploying the pods.
+      # The service account should have sufficient permissions.
+      serviceAccountName: edb
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: edb-database
+          # This can be set to another image. Images can be found in:
+          # quay.io/enterprisedb/postgres{10,11,12}-advanced-server
+          # quay.io/enterprisedb/postgresql(10,11,12}
+          image: "quay.io/enterprisedb/postgres12-advanced-server:latest"
+          # this configuration pulls a new version on every reschedule of the pod.
+          imagePullPolicy: Always
+          command: ["/bin/bash"]
+          args: ["-ec", "/police.sh && /launch.sh"]
+          env:
+            - name: PG_USER
+              # The initial superuser of the cluster.
+              value: enterprisedb
+            - name: PG_PASSWORD
+              # The password of PG_USER.
+              value: edb
+            - name: PGDATA
+              # Location of the datafiles. Keep inline with the mountPath of the data volume.
+              value: /var/lib/edb/data
+            - name: PGDATA_WAL
+              # Location of the walfiles. Keep inline with the mountPath of the wal volume.
+              value: /var/lib/edb/wal
+            - name: PGDATA_ARCHIVE
+              # Location of the archive files. Keep inline with the mountPath of the walcrhive volume.
+              value: /var/lib/edb/wal_archive
+            - name: USE_CONFIGMAP
+              # Set this to read custom configuration from a configmap.
+              value: "true"
+            - name: NO_REDWOOD_COMPAT
+              # Disable redwood compatibility options on EDB Postgres Advanced Server.
+              value: "true"
+            - name: CHARSET
+              # The initial charactset of the cluster.
+              value: UTF8
+          ports:
+            - name: postgres
+              # The Port that is exposed on these pods. Set to 5432 for Postgres.
+              containerPort: 5444
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 5444
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 5444
+          resources:
+            limits:
+              # Set this to configure the max amount of memory available to the container.
+              memory: 1Gi
+              # Set this to configure the max amount of cpu available to the container.
+              cpu: 2
+            requests:
+              # Set this to configure the memory shares available to the container under pressure.
+              memory: 500Mi
+              # Set this to configure the cpu hares available to the container under pressure.
+              cpu: 1
+          volumeMounts:
+            - name: data
+              # If you change this path, also change the PGDATA environment variable defined earlier.
+              mountPath: /var/lib/edb/data
+            - name: wal
+              # If you change this path, also change the PGDATA_WAL environment variable defined earlier.
+              mountPath: /var/lib/edb/wal
+            - name: walarchive
+              # If you change this path, also change the PGDATA_ARCHIVE environment variable defined earlier.
+              mountPath: /var/lib/edb/wal_archive
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        # Use this option to mount a configmap with custom options.
+        - name: config-volume
+          configMap:
+            name: edb-db-custom-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Amount of storage available for Postgres data.
+            storage: 5Gi
+    - metadata:
+        name: wal
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Amount of storage available for wal files.
+            storage: 5Gi
+    - metadata:
+        name: walarchive
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Amount of storage available for wal archives.
+            storage: 5Gi
