@@ -30,3 +30,9 @@ If running on OpenShift, also create securty context (SCC):
 
     kubectl apply -f scc.yaml
     oc adm policy add-scc-to-user edb-operator-scc -z edb
+
+## 5. Create configmap for custom configs (StatefulSet)
+
+If deploying as a statefulset, also create configmap for custom configs:
+
+    kubectl apply -f configmap.yaml
