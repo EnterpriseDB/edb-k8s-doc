@@ -54,3 +54,6 @@ b. Remote access from a client application:
 
 - Access the postgres database from a client application, e.g. pgadmin, using the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step
 
+
+## Cleanup
+To cleanup the deployments, use the instructions [here](../Cleanup/README.md)

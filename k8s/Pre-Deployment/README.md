@@ -1,6 +1,9 @@
 # Pre-Deployment Steps For Helm Chart and CLI
 Complete the steps below to make PostgreSQL and EDB Postgres Advanced Server containers ready for deployment.
 
+
+NOTE: If you are redeploying in the same namespace, cleanup using the instructions [here](../Cleanup/README.md)
+
 ## 1. Create namespace in your k8s cluster
     kubectl create ns <your-namespace>
 For more details see the official k8s doc [here](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace)
