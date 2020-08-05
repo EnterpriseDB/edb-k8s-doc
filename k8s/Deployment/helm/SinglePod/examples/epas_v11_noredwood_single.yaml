@@ -1,21 +1,20 @@
 ---
 # this is the name of the statefulset and service. It defaults to image
-name: edb-epas-v11-noredwood
-label: edb-epas11-noredwood
+name: edb-epas-v11-noredwood-single
+label: edb-epas11-noredwood-single
 
 acceptEULA: "No"
 
-image: "quay.io/edb/postgres-advanced-server-11:latest"
+image: "quay.io/enterprisedb/postgres11-advanced-server:latest"
 
 pgconfig:
   port: 5444
 
 # this value can be Statefulset, or Pod
-deploymentType: Statefulset
+deploymentType: Pod
 
 config:
   noRedwoodCompat: "true"
-  customConfigmap: "edb-db-custom-config"
 
 resources:
   limits:

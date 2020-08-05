@@ -40,8 +40,6 @@ spec:
           value: /var/lib/edb/wal
         - name: PGDATA_ARCHIVE
           value: /var/lib/edb/wal_archive
-        - name: NO_REDWOOD_COMPAT
-          value: "false"
         - name: CHARSET
           value: UTF8
       ports:

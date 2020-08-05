@@ -52,8 +52,6 @@ spec:
               value: /var/lib/edb/wal_archive
             - name: USE_CONFIGMAP
               value: "true"
-            - name: NO_REDWOOD_COMPAT
-              value: "false"
             - name: CHARSET
               value: UTF8
           ports:

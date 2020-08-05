@@ -10,16 +10,16 @@ Use the yaml files in the examples directory for your desired deployment.
 
 ### Deploy Container As A Single Pod
 
-- Deploy EDB Postgres Advanced Server v11 with redwood mode:
+- Deploy EDB Postgres Advanced Server v11 with no redwood mode:
 
-        kubectl apply -f SinglePod/examples/epas_v11_redwood_single.yaml
+        kubectl apply -f SinglePod/examples/epas_v11_noredwood_single.yaml
  
  
 ### Deploy Container As A StatefulSet
 
-- Deploy EDB Postgres Advanced Server v11 with redwood mode:
+- Deploy EDB Postgres Advanced Server v11 with no redwood mode:
 
-         kubectl apply -f Statefulset/examples/epas_v11_redwood_statefulset.yaml
+         kubectl apply -f Statefulset/examples/epas_v11_noredwood_statefulset.yaml
  
 
 ## Post-Deployment
