@@ -25,7 +25,7 @@ spec:
   serviceAccountName: edb
   containers:
     - name: edb-database
-      image: "quay.io/enterprisedb/postgres11-advanced-server:latest"
+      image: "quay.io/edb/postgres-advanced-server-11:latest"
       imagePullPolicy: Always
       command: ["/bin/bash"]
       args: ["-ec", "/police.sh && /launch.sh"]

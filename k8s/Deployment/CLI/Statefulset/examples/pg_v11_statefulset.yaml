@@ -35,7 +35,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
         - name: edb-database
-          image: "quay.io/enterprisedb/postgresql11:latest"
+          image: "quay.io/edb/postgresql-11:latest"
           imagePullPolicy: Always
           command: ["/bin/bash"]
           args: ["-ec", "/police.sh && /launch.sh"]

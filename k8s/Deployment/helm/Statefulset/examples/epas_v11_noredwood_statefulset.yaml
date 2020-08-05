@@ -5,7 +5,7 @@ label: edb-epas11-noredwood
 
 acceptEULA: "No"
 
-image: "quay.io/enterprisedb/postgres11-advanced-server:latest"
+image: "quay.io/edb/postgres-advanced-server-11:latest"
 
 pgconfig:
   port: 5444

@@ -5,7 +5,7 @@ label: edb-pg11
 
 acceptEULA: "No"
 
-image: "quay.io/edb/postgresql11:latest"
+image: "quay.io/edb/postgresql-11:latest"
 
 pgconfig:
   port: 5432
@@ -14,7 +14,7 @@ pgconfig:
 deploymentType: Statefulset
 
 config:
-  noRedwoodCompat: "true"
+  noRedwoodCompat:
   customConfigmap: "edb-db-custom-config"
 
 resources:
