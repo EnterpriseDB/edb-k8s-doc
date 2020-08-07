@@ -27,14 +27,6 @@ If deploying via the CLI, delete the k8s objects associated with your specific d
 
         kubectl delete statefulset.apps/edb-pg-v11 service/edb-pg-v11
 
-
-## Delete k8s staging objects
-
-
-    kubectl delete secret quay-regsecret
-    kubectl delete configmap edb-db-custom-config
-    kubectl delete serviceaccount edb
-
 ## Delete Persistent Volume Claims (PVC)
 
 If deploying containers as Statefulsets, also delete the persistent volume claims:
@@ -50,4 +42,15 @@ If deploying containers as Statefulsets, also delete the persistent volume claim
         kubectl delete pvc data-edb-pg-v11-0 \
         walarchive-edb-pg-v11-0 \
         wal-edb-pg-v11-0
+
+
+## Delete k8s staging objects
+
+NOTE: If you plan to reuse the staging objects in the same namespace, skip this step.
+
+    kubectl delete secret quay-regsecret
+    kubectl delete configmap edb-db-custom-config
+    kubectl delete serviceaccount edb
+
+
 
