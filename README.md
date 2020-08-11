@@ -1,24 +1,38 @@
 # edb-k8s-se
 
-#Kelly words!
+Customers can deploy and use Postgres containers from EDB using the steps described here. The EDB Postgres containers come in two flavors:
 
-(kelly workds)
+- Community Postgres
+- EDB Postgres Advanced Server (EPAS)
+
+The containers can be deployed on the following platforms:
+
+- Docker
+
+    The official documention for docker is available [here](https://docs.docker.com/)
+
+- Kubernetes
+
+    The official documention for kubernetes is available [here](https://kubernetes.io/docs/home/)
+
+
+## Getting started
+
+- Download sample files by cloning (this) git repo and change to root directory
+        
+        git clone https://github.com/EnterpriseDB/edb-k8s-se.git
+        cd edb-k8s-se
+
+- Obtain credentials to access EDB image repositories on [quay.io](https://quay.io/edb)
+
+- Deploy EDB containers using the deployment methods listed below
 
 
 
-**Getting started**
+## Deployment Methods
 
-Step1: `git clone https://github.com/EnterpriseDB/edb-k8s-se.git`
+- Docker: Setup and examples of deploying EDB Postgres containers on Docker Desktop is described [here](Docker)
 
-Step2: `cd edb-k8s-se`
+- Helm Chart: Setup and examples of deploying EDB Postgres containers in k8s using Helm charts is described [here](k8s/helm).
 
-
-**Docker**: Setup and examples EDB Postgres on Docker Desktop.
-
-**Helm Single Pod**: Using Helm to deploy a Single EDB Postgres Pod on K8s.
-
-**Helm Statefulset**: Using Helm to deploy a Statefulset on K8s.
-
-**Kubernetes Single Pod**: YAML to deploy a Single EDB Postgres Pod on K8s.
-
-**Kubernetes Single Statefulset**: YAML to deploy EDB Postgrs Statefulset on K8s. 
+- Command-line Interface (CLI): Setup and examples of deploying EDB Postgres containers in k8s using the CLI is described [here](k8s/CLI).
