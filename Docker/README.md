@@ -9,6 +9,8 @@ For Windows/macOS, installing [Docker Desktop](https://www.docker.com/products/d
 
     docker version
 
+**NOTE** we only support version Docker Engine version 1.13 and above.
+
 ## 3. Login to EDB Container Registry (quay.io)
     docker login quay.io -u <your-quay.io-username> -p <your-quay.io-password>
 
@@ -42,7 +44,7 @@ a. Deployment options are provided as environment variables:
 | CHARSET              | UTF8                       | Character set             |
 | NO_REDWOOD_COMPAT    | false                      | Redwood mode for EPAS     |
 
-NOTE: For information on how to use docker volumes, refer to the documentation [here](https://docs.docker.com/storage/volumes/).
+**NOTE**: For information on how to use docker volumes, refer to the documentation [here](https://docs.docker.com/storage/volumes/).
 
 b. Deployment examples:
 
