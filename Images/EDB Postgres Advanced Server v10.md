@@ -17,6 +17,8 @@ $ curl -sSL https://raw.githubusercontent.com/EnterpriseDB/edb-k8s-se/master/Doc
 $ docker-compose up -d
 ```
 
+**NOTE** You need Docker Desktop installed to run the commands above. See installation instructions [here](../Docker/installation.md)
+
 # Why Use EDB Container Images?
 
 * EDB closely tracks upstream source changes and promptly publishes new versions of this image using our automated systems.
@@ -295,6 +297,10 @@ The EDB Postgres Advanced Server container images allows the following environme
 | CHARSET              | UTF8                       | Character set             |
 | NO_REDWOOD_COMPAT    | false                      | Redwood mode for EPAS     |
 
+
+## Using postgres
+
+Examples of how to connect to the postgres database server running inside the container and run queries are available [here](using_postgres.md)
 
 # Logging
 
