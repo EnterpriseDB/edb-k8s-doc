@@ -41,7 +41,6 @@ You can deploy containers on the following platforms:
 - Deploy EDB containers using the deployment methods listed below
 
 
-
 ## Deployment Methods
 
 - Docker: Setup and examples of deploying EDB Postgres containers on Docker Desktop is described [here](Docker)
