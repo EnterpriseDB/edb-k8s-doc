@@ -28,6 +28,10 @@ The containers can be deployed on the following platforms:
 - Deploy EDB containers using the deployment methods listed below
 
 
+## Images
+
+You can find more information on our images, and how to run them with docker / docker-compose in the [Images](Images) folder.
+
 
 ## Deployment Methods
 
