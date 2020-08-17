@@ -98,18 +98,18 @@ These environment variables are set within the container image and can be modifi
 
  Environment Variable | Default                    | Description               |
 |---------------------|----------------------------|---------------------------|
-| USE_CONFIGMAP           | false                      | Indicates whether custom postgresql.conf settings should be used. Applicable values are true or false. To provide custom postgresql.conf settings, you have to create a docker volume and include the settings in the file named custom_postgresql.conf; the docker volume has to be mounted at the path /config during deployment |
-| USE_SECRET           | false          | Use default Postgres user and password if set to false|
-| PG_USER               | /var/lib/edb          | Ignored if USE_SECRET is true.</br> If USE_SECRET is not true, .  Postgres user defaults to “enterprisedb”.|
+| USE_CONFIGMAP           |                       | Indicates whether custom postgresql.conf settings should be used. Applicable values are true or false. To provide custom postgresql.conf settings, you have to create a docker volume and include the settings in the file named custom_postgresql.conf; the docker volume has to be mounted at the path /config during deployment |
+| USE_SECRET           |           | Use default Postgres user and password if set to false|
+| PG_USER               | enterprisedb          | Ignored if USE_SECRET is true.</br> If USE_SECRET is not true, .  Postgres user defaults to “enterprisedb”.|
 | PG_PASSWORD     |           | Ignored if USE_SECRET is true. </br>If USE_SECRET is not true, a password should be provided|
 | PG_ROOT               | /var/lib/edb          | Root directory of Postgres data, write ahead log, and write ahead log archive files. |
 | PGDATA               | /var/lib/edb/data          | Postgres data directory. You can override the default path by creating a docker volume and setting PGDATA to its path   |
 | PGDATA_WAL           | /var/lib/edb/wal           | Postgres Write Ahead Log directory. You can override the default path by creating a docker volume and setting PGDATA_WAL to its path    |
 | PGDATA_ARCHIVE       | /var/lib/edb/wal_archive   | Postgres Write Ahead Log archive directory. You can override the default path by creating a docker volume and setting PGDATA_ARCHIVE to its path |
-| PG_INITDB              | true               | Indicates if database directories will be initialized on startup. Override to true if initialization is desired; data  will be lost.|
-| PG_NOSTART              | false                | Indicates that another process will not start the database. Override to true  if another process will be in control of starting the database (e.g. keeper)|
+| PG_INITDB              |                | Indicates if database directories will be initialized on startup. Override to true if initialization is desired; data  will be lost.|
+| PG_NOSTART              |                 | Indicates that another process will not start the database. Override to true  if another process will be in control of starting the database (e.g. keeper)|
 | CHARSET              | UTF8                       | Indicates the default character set that will be used for the database cluster.             |
-| NO_REDWOOD_COMPAT    | false | Indicates EPAS should run in redwood mode.  Override to true if compatibility with Oracle is not needed. |
+| NO_REDWOOD_COMPAT    |  | Indicates EPAS should run in redwood mode.  Override to true if compatibility with Oracle is not needed. |
 
 
 
