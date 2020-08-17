@@ -52,9 +52,9 @@ The following container images are available on [quay.io](http://quay.io/edb):
 | postgres-advanced-server-12   | EDB Postgres Advanced Server v12                  |
 | postgres-advanced-server-11   | EDB Postgres Advanced Server v11                  | 
 | postgres-advanced-server-10   | EDB Postgres Advanced Server v10                  |
-| postgresql-12  | EDB Postgresql v12                  |  
-| postgresql-11  | EDB Postgresql v11                  |   
-| postgresql-10  | EDB Postgresql v11                  |          
+| postgresql-12  | PostgreSQL v12                  |  
+| postgresql-11  | PostgreSQL v11                  |   
+| postgresql-10  | PostgreSQL v11                  |          
 
 
 
