@@ -1,14 +1,14 @@
-# What is PostgreSQL?
+# What is EDB Postgres Advanced Server?
 
 
 > EDB Postgres Advanced Server (EPAS) is an enhanced version of open source PostgreSQL. EDB Postgres Advanced Server is continuously synchronized with PostgreSQL and adds functionality such as enterprise security, performance diagnostics, Oracle® database compatibility, and productivity features for developers and DBAs [source](https://info.enterprisedb.com/rs/069-ALB-339/images/edb-postgres-advanced-server-ds.pdf?_ga=2.121784267.132786095.1597065397-115782412.1590602128).
 
 # TL;DR
 
-**NOTE** You need Docker Desktop installed to deploy postgres using the Docker command line and the docker-compose tool (Docker Desktop includes docker-compose tool). See installation instructions [here](../Docker/installation.md)
+Docker Desktop should be installed to deploy Postgres using either Docker command line or Docker Compose.  Docker Desktop includes both. See installation instructions [here](../Docker/installation.md)
 
 
-## Deploying Postgres using Docker Command Line
+## Deploying Postgres using Docker command line
 
 ```console
 $ docker run --name edb-postgres -p 5444:5444 quay.io/edb/postgres-advanced-server-12:latest bash -c '/police.sh && /launch.sh'
@@ -29,15 +29,15 @@ To deploy Postgres in Kubernetes using helm charts, see [EDB Charts GitHub Repos
 
 # Why Use EDB Container Images?
 
-* All our images are based on the [ubi7](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image) container image.
-* EDB Container images with the latest distribution packages are released, whenever: 
-    * Common Vulnerabilities and Exposures are resolved in the base image, and/or 
-    * New versions of the Postgres binaries are available.
-    * Latest bug fixes and features are released.
+* EDB container images are based on the [ubi7](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image).
+* EDB container images with the latest distribution packages are released, whenever: 
+    * Common Vulnerabilities and Exposures are resolved in the base images 
+    * New versions of the Postgres binaries are available 
+    * New bug fixes and features are released
 
 
 
-> The [Common Vulnerabilities and Exposures scan reports](https://quay.io/repository/edb/postgres-advanced-server-12?tab=tags) contains a security report with all open CVEs.
+> The [Common Vulnerabilities and Exposures scan reports](https://quay.io/repository/edb/postgres-advanced-server-12?tab=tags) contain a security report with all open CVEs.
 
 To get the list of actionable security issues, find the ``latest`` tag and click the ``Vulnerability Report`` link under the corresponding ``Security scan`` field. On the next page, select the ``Only show fixable`` filter.
 
@@ -52,15 +52,15 @@ The following container images are available on [quay.io](http://quay.io/edb):
 | postgres-advanced-server-12   | EDB Postgres Advanced Server v12                  |
 | postgres-advanced-server-11   | EDB Postgres Advanced Server v11                  | 
 | postgres-advanced-server-10   | EDB Postgres Advanced Server v10                  |
-| postgresql-12  | EDB Postgresql v12                  |  
-| postgresql-11  | EDB Postgresql v11                  |   
-| postgresql-10  | EDB Postgresql v11                  |          
+| postgresql-12  | PostgreSQL v12                  |  
+| postgresql-11  | PostgreSQL v11                  |   
+| postgresql-10  | PostgreSQL v11                  |          
 
 
 
 # Supported Tags
 
-Learn more about the EDB container image tagging policy and the available images and image repositories in our [Tagging policy document](https://github.com/EnterpriseDB/edb-k8s-se/tree/master/k8s/Images/tagging_policy.md).
+The EDB container image tagging policy, available images, and image repositories is available in our [Tagging policy document](https://github.com/EnterpriseDB/edb-k8s-se/tree/master/k8s/Images/tagging_policy.md).
 
 `ubi7-amd64, latest`
 
@@ -69,7 +69,7 @@ Subscribe to project updates by watching the [EDB GitHub repository](https://git
 
 # Downloading EDB Postgres Docker Image
 
-Before deploying the EDB Postgres Docker Image, you must obtain [quay.io](http://quay.io) credentials to pull the prebuilt image from the [repository](https://quay.io/repository/edb/postgres-advanced-server-12:latest).
+Before deploying the EDB Postgres Docker Image, you must obtain [quay.io](http://quay.io) credentials to pull the pre-built image from the [repository](https://quay.io/repository/edb/postgres-advanced-server-12:latest).
 
 ```console
 $ docker pull quay.io/edb/postgres-advanced-server-12:latest
@@ -88,7 +88,7 @@ The following environment variables are used with EDB Postgres Advanced Server o
 
 | Environment Variable | Default                    | Description               |
 |----------------------|----------------------------|---------------------------|
-| LICENSE_URL              | https://www.enterprisedb.com/limited-use-license | Open source or limited use license depending on the distribution user.|
+| LICENSE_URL              | https://www.enterprisedb.com/limited-use-license | Limited use license for evaluation. period.|
 | PGOWNER           | postgres(pg)</br>enterprisedb(epas)    | Database owner         |
 | PGDATA_HOME       | /var/lib/edb        | Root directory for Postgres files.  |
 | PGBIN        | version-specific        | Install directory of Postgres.  |
