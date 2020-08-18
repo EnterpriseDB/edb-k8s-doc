@@ -1,42 +1,36 @@
-# edb-k8s-se
+# EDB for Kubernetes
 
-Customers can deploy and use Postgres containers from EDB using the steps described here. The EDB Postgres containers come in two flavors:
+EDB Containers allow you to provision a high-availability EDB Postgres Advanced Server or PostgreSQL database in a cloud-agnostic environment that is certified for production deployment with any container platform technology. EDB containers provide open-source services and components that will help you build a portable, reliable, and responsive application environment.
 
-- Community Postgres
+You can use EDB Containers to create a robust production or R & D environment on Kubernetes or Docker platforms. Ease of deployment and scalability of EDB Containers will help you minimize management responsibilities while maximizing your IT budget.
+
+Kubernetes provides stability in an affordable environment; you can easily:
+
+- Manage Postgres at scale
+- Deploy anywhere: Run Postgres on public, private, and hybrid clouds
+- Plug into existing DevOps pipelines
+
+
+Docker Containers provide an easily-managed architecture that is:
+
+- Easy to deploy
+- Perfect for experimental sandboxes
+- Maximizes your resource budget
+
+
+EDB Postgres Containers simplify the deployment of:
+
 - EDB Postgres Advanced Server (EPAS)
+- PostgreSQL
 
-The containers can be deployed on the following platforms:
-
-- Docker
-
-    The official documention for docker is available [here](https://docs.docker.com/)
-
-- Kubernetes
-
-    The official documention for kubernetes is available [here](https://kubernetes.io/docs/home/)
+EPAS is based on the open-source PostgreSQL database; EPAS provides extended functionality, utilities, and compatibility for Oracle applications.  For more information about the advantages of EPAS or PostgreSQL, visit the [EDB website](www.enterprisedb.com).
 
 
 ## Getting started
 
-- Download sample files by cloning (this) git repo and change to root directory
-        
-        git clone https://github.com/EnterpriseDB/edb-k8s-se.git
-        cd edb-k8s-se
+- Docker: For more information, see [Set up and examples of deploying EDB Postgres containers on Docker Desktop](https://github.com/EnterpriseDB/edb-k8s-se/tree/4de387e6f6bc01a4d83237c25ca00d895ee5d566/Docker).
 
-- Obtain credentials to access EDB image repositories on [quay.io](https://quay.io/edb)
+- Helm Chart: For more information see, [Setup and examples of deploying EDB Postgres containers in Kubernetes using Helm charts](https://github.com/EnterpriseDB/edb-k8s-se/blob/4de387e6f6bc01a4d83237c25ca00d895ee5d566/k8s/helm).
 
-- Deploy EDB containers using the deployment methods listed below
+- Command-line Interface (CLI): For more information, see [Set up and examples of deploying EDB Postgres containers in k8s using the CLI](https://github.com/EnterpriseDB/edb-k8s-se/blob/4de387e6f6bc01a4d83237c25ca00d895ee5d566/k8s/CLI).
 
-
-## Images
-
-You can find more information on our images, and how to run them with docker / docker-compose in the [Images](Images) folder.
-
-
-## Deployment Methods
-
-- Docker: Setup and examples of deploying EDB Postgres containers on Docker Desktop is described [here](Docker)
-
-- Helm Chart: Setup and examples of deploying EDB Postgres containers in k8s using Helm charts is described [here](k8s/helm).
-
-- Command-line Interface (CLI): Setup and examples of deploying EDB Postgres containers in k8s using the CLI is described [here](k8s/CLI).
