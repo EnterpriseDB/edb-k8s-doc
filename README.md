@@ -1,11 +1,24 @@
-# edb-k8s-se
+# EDB for Kubernetes
 
-Customers can deploy and use Postgres containers from EDB using the steps described here. The EDB Postgres containers come in two flavors:
+Kubernetes provides business benefits:
 
-- Community Postgres
+- Manage Postgres at scale
+- Deploy anywhere: Run Postgres on public, private, and hybrid clouds
+- Plug into existing DevOps pipelines
+
+Docker Containers provide business benefits:
+
+- Easy to deploy
+- Build experimental sandboxes
+- You can maximise your resource budget by not having unused servers
+
+The EDB Postgres containers are available in two flavors:
+
 - EDB Postgres Advanced Server (EPAS)
+- PostgreSQL
 
-The containers can be deployed on the following platforms:
+
+You can deploy containers on the following platforms:
 
 - Docker
 
@@ -28,9 +41,11 @@ The containers can be deployed on the following platforms:
 - Deploy EDB containers using the deployment methods listed below
 
 
+
 ## Images
 
 You can find more information on our images, and how to run them with docker / docker-compose in the [Images](Images) folder.
+
 
 
 ## Deployment Methods
