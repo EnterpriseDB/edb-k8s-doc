@@ -1,65 +1,116 @@
-# What is PostgreSQL?
+# What is EDB Postgres Advanced Server?
 
-> [PostgreSQL](http://www.postgresql.org) also known as Postgres, is a free and open-source relational database management system (RDBMS)[[source]](https://en.wikipedia.org/wiki/PostgreSQL).
 
 > EDB Postgres Advanced Server (EPAS) is an enhanced version of open source PostgreSQL. EDB Postgres Advanced Server is continuously synchronized with PostgreSQL and adds functionality such as enterprise security, performance diagnostics, Oracle® database compatibility, and productivity features for developers and DBAs [source](https://info.enterprisedb.com/rs/069-ALB-339/images/edb-postgres-advanced-server-ds.pdf?_ga=2.121784267.132786095.1597065397-115782412.1590602128).
 
 # TL;DR
 
+Docker Desktop should be installed to deploy Postgres using either Docker command line or Docker Compose.  Docker Desktop includes both. See installation instructions [here](../Docker/installation.md)
+
+
+## Deploying Postgres using Docker command line
+
 ```console
 $ docker run --name edb-postgres -p 5444:5444 quay.io/edb/postgres-advanced-server-10:latest bash -c '/police.sh && /launch.sh'
 ```
 
-## Docker Compose
+## Deploying Postgres using Docker Compose
 
 ```console
 $ curl -sSL https://raw.githubusercontent.com/EnterpriseDB/edb-k8s-se/master/Docker/docker-compose-epas.yaml > docker-compose.yaml
 $ docker-compose up -d
 ```
 
-**NOTE** You need Docker Desktop installed to run the commands above. See installation instructions [here](../Docker/installation.md)
+## Deploying Postgres in Kubernetes using Helm Charts
+
+To deploy Postgres in Kubernetes using helm charts, see [EDB Charts GitHub Repository](https://github.com/EnterpriseDB/edb-helm).
+
+
 
 # Why Use EDB Container Images?
 
-* EDB closely tracks upstream source changes and promptly publishes new versions of this image using our automated systems.
-* With EDB Container images, the latest bug fixes and features are available as soon as possible.
-* All our images are based on the [ubi7](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image) container image.
-* EDB Container images with the latest distribution packages are released, whenever: 
-    * Common Vulnerabilities and Exposures are resolved in the base image, and/or 
-    * New versions of the Postgres binaries are available.
+* EDB container images are based on the [ubi7](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image).
+* EDB container images with the latest distribution packages are released, whenever: 
+    * Common Vulnerabilities and Exposures are resolved in the base images 
+    * New versions of the Postgres binaries are available 
+    * New bug fixes and features are released
 
 
 
-> The [Common Vulnerabilities and Exposures scan reports](https://quay.io/repository/edb/postgres-advanced-server-10?tab=tags) contains a security report with all open CVEs.
+> The [Common Vulnerabilities and Exposures scan reports](https://quay.io/repository/edb/postgres-advanced-server-12?tab=tags) contain a security report with all open CVEs.
 
 To get the list of actionable security issues, find the ``latest`` tag and click the ``Vulnerability Report`` link under the corresponding ``Security scan`` field. On the next page, select the ``Only show fixable`` filter.
 
 
 
-# Deploying Postgres in Kubernetes
+# Inventory of EDB Container Images
 
-EDB Containers can be deployed using Helm Charts. For more information, see [EDB Charts GitHub Repository](https://github.com/EnterpriseDB/edb-k8s-se/tree/master/k8s/Deployment/helm).
-EDB Containers can be used with [Kubeapps](https://kubeapps.com/) for deployment and management of Helm Charts in clusters.
+The following container images are available on [quay.io](http://quay.io/edb):
+
+| Image Name                    | Description                                       | 
+|-------------------------------|---------------------------------------------------|
+| postgres-advanced-server-12   | EDB Postgres Advanced Server v12                  |
+| postgres-advanced-server-11   | EDB Postgres Advanced Server v11                  | 
+| postgres-advanced-server-10   | EDB Postgres Advanced Server v10                  |
+| postgresql-12  | PostgreSQL v12                  |  
+| postgresql-11  | PostgreSQL v11                  |   
+| postgresql-10  | PostgreSQL v11                  |          
+
 
 
 # Supported Tags
 
-Learn more about the EDB container image tagging policy and the available images and image repositories in our [Tagging policy document](https://github.com/EnterpriseDB/edb-k8s-se/tree/master/k8s/Images/tagging_policy.md).
+The EDB container image tagging policy, available images, and image repositories is available in our [Tagging policy document](https://github.com/EnterpriseDB/edb-k8s-se/tree/master/k8s/Images/tagging_policy.md).
 
 `ubi7-amd64, latest`
 
 Subscribe to project updates by watching the [EDB GitHub repository](https://github.com/EnterpriseDB/edb-k8s-se/tree/master).
 
 
-# Deploying an EDB Postgres Docker Image
+# Downloading EDB Postgres Docker Image
 
-Before deploying the EDB Postgres Docker Image, you must obtain [quay.io](http://quay.io) credentials to pull the prebuilt image from the [repository](https://quay.io/repository/edb/postgres-advanced-server-10:latest).
+Before deploying the EDB Postgres Docker Image, you must obtain [quay.io](http://quay.io) credentials to pull the pre-built image from the [repository](https://quay.io/repository/edb/postgres-advanced-server-10:latest).
 
 ```console
 $ docker pull quay.io/edb/postgres-advanced-server-10:latest
 ```
 
-To use a specific version, you can pull a versioned tag. You can view the [list of available versions](https://quay.io/repository/edb/postgres-advanced-server-10) in the Quay container registry.
+To use a specific version, you can pull a versioned tag. You can view the [list of available versions](https://quay.io/repository/edb/postgres-advanced-server-12) in the Quay container registry.
+
+
+# Environment Variables
+
+The following environment variables are used with EDB Postgres Advanced Server or PostgreSQL container images.
+
+## Immutable Environment Variables
+
+
+
+| Environment Variable | Default                    | Description               |
+|----------------------|----------------------------|---------------------------|
+| LICENSE_URL              | https://www.enterprisedb.com/limited-use-license | Limited use license for evaluation. period.|
+| PGOWNER           | postgres(pg)</br>enterprisedb(epas)    | Database owner         |
+| PGDATA_HOME       | /var/lib/edb        | Root directory for Postgres files.  |
+| PGBIN        | version-specific        | Install directory of Postgres.  |
+
+## Mutable Environment Variables 
+These environment variables are set within the container image and can be modified by the consumer through Helm or Docker.
+
+ Environment Variable | Default                    | Description               |
+|---------------------|----------------------------|---------------------------|
+| USE_CONFIGMAP           |                       | Indicates whether custom postgresql.conf settings should be used. Applicable values are true or false. To provide custom postgresql.conf settings, you have to create a docker volume and include the settings in the file named custom_postgresql.conf; the docker volume has to be mounted at the path /config during deployment |
+| USE_SECRET           |           | Use default Postgres user and password if set to false|
+| PG_USER               | enterprisedb          | Ignored if USE_SECRET is true.</br> If USE_SECRET is not true, .  Postgres user defaults to “enterprisedb”.|
+| PG_PASSWORD     |           | Ignored if USE_SECRET is true. </br>If USE_SECRET is not true, a password should be provided|
+| PG_ROOT               | /var/lib/edb          | Root directory of Postgres data, write ahead log, and write ahead log archive files. |
+| PGDATA               | /var/lib/edb/data          | Postgres data directory. You can override the default path by creating a docker volume and setting PGDATA to its path   |
+| PGDATA_WAL           | /var/lib/edb/wal           | Postgres Write Ahead Log directory. You can override the default path by creating a docker volume and setting PGDATA_WAL to its path    |
+| PGDATA_ARCHIVE       | /var/lib/edb/wal_archive   | Postgres Write Ahead Log archive directory. You can override the default path by creating a docker volume and setting PGDATA_ARCHIVE to its path |
+| PG_INITDB              |                | Indicates if database directories will be initialized on startup. Override to true if initialization is desired; data  will be lost.|
+| PG_NOSTART              |                 | Indicates that another process will not start the database. Override to true  if another process will be in control of starting the database (e.g. keeper)|
+| CHARSET              | UTF8                       | Indicates the default character set that will be used for the database cluster.             |
+| NO_REDWOOD_COMPAT    |  | Indicates EPAS should run in redwood mode.  Override to true if compatibility with Oracle is not needed. |
+
 
 
 # Ensuring that Data Persists Between Containers
@@ -278,24 +329,7 @@ services:
   ...
 ```
 
-## Environment Variables
 
-The EDB Postgres Advanced Server container images allows the following environment variables:
-
-| Environment Variable | Default                    | Description               |
-|----------------------|----------------------------|---------------------------|
-| PG_USER              | enterprisedb               | Postgres user             |
-| PG_PASSWORD          | postgres(pg), edb(EPAS)    | Postgres password         |
-| PG_ROOT               | /var/lib/edb          | Root directory of Postgres data, write ahead log, and write ahead log archive files. You can override the default path by creating a docker volume and setting PG_ROOT to its path |
-| PGDATA               | /var/lib/edb/data          | Postgres data directory. You can override the default path by creating a docker volume and setting PGDATA to its path   |
-| PGDATA_WAL           | /var/lib/edb/wal           | Postgres Write Ahead Log directory. You can override the default path by creating a docker volume and setting PGDATA_WAL to its path    |
-| PGDATA_ARCHIVE       | /var/lib/edb/wal_archive   | Postgres Write Ahead Log archive directory. You can override the default path by creating a docker volume and setting PGDATA_ARCHIVE to its path |
-| PG_INITDB              | true               | Indicates if the database directories will be initialized on startup. Applicable values are true or false             |
-| PG_NOSTART              | false                | Indicates that another process will not start the database; override to “true” if another process will be in control of starting the database (e.g. keeper). Applicable values are true or false|
-| USE_SECRET           | false                      | Use default Postgres user and password if set to false|
-| USE_CONFIGMAP           | false                      | Indicates whether custom postgresql.conf settings should be used. Applicable values are true or false. To provide custom postgresql.conf settings, you have to create a docker volume and include the settings in the file named custom_postgresql.conf; the docker volume has to be mounted at the path /config during deployment |
-| CHARSET              | UTF8                       | Character set             |
-| NO_REDWOOD_COMPAT    | false                      | Redwood mode for EPAS     |
 
 
 ## Using postgres
@@ -306,11 +340,13 @@ Examples of how to connect to the postgres database server running inside the co
 
 The Postgres Container image directs container logs to stdout. Use the following commands to view the logs:
 
+## Docker Command Line
+
 ```console
 $ docker logs edb-postgres
 ```
 
-or use Docker Compose:
+## Docker Compose
 
 ```console
 $ docker-compose logs edb-postgres
