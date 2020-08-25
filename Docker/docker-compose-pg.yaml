@@ -3,17 +3,9 @@ services:
   edb-postgres:
     command: bash -c '/police.sh && /launch.sh'
     image: quay.io/edb/postgresql-11:latest
+    container_name: edb-postgres
     environment:
-      - PG_USER=myapp
-      - PGUSER=myapp
-      - PGDATABASE=postgres
-      - PG_PASSWORD=pa55w0rd
+      - PG_INITDB=true
       - USE_SECRET=true
-    ports:
-      - 5432:5432
-    volumes:
-      - pgdata:/var/lib/edb/data
-      - pgwal:/var/lib/edb/pg_wal
-volumes:
-  pgdata:
-  pgwal:
+      - PG_USER=myapp
+      - PG_PASSWORD=pa55w0rd
