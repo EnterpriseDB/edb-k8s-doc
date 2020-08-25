@@ -44,9 +44,8 @@ The following options are provided as environment variables for Docker deploymen
 | PG_USER              | enterprisedb         | Postgres user             |
 
 
-| Environment Variable | Required | Default              |Description               |
-|----------------------|---------------------------------|---------------------------|
-
+| Environment Variable | Required | Default              | Description               |
+|----------------------|----------|----------------------|---------------------------|
 | PG_PASSWORD          | Yes      | n/a                  | Postgres password. User must include value when deploying         |
 | PG_ROOT              | No       | /var/lib/edb         | Root directory of Postgres data, write ahead log, and write ahead log archive files. Override the default path by creating a docker volume and setting PG_ROOT to its path |
 | PGDATA               | No       | $PG_ROOT/data        | Postgres data directory. Override the default path by creating a docker volume and setting PGDATA to its path   |
