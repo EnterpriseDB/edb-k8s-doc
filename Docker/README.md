@@ -79,8 +79,8 @@ The following options are provided as environment variables for Docker deploymen
     
     ii. deploy container
 
-        docker run --detach --name edb-postgres --env PG_INITDB=true \
-        --env PGDATA=/data -v <local-data-directory>:/data \
+        docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword \
+        --env PG_INITDB=true --env PGDATA=/data -v <local-data-directory>:/data \
         quay.io/edb/postgresql-11:latest bash -c '/police.sh && /launch.sh'
         
 ## Verification
