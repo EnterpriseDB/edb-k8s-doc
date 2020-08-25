@@ -3,7 +3,7 @@ Deploy PostgreSQL and EDB Postgres Advanced Server containers via the command-li
 
 ## Pre-deployment Steps
 
-Complete pre-deployment steps outlined [here](k8s/Pre-Deployment)
+Complete pre-deployment steps outlined [here](../../Pre-Deployment)
 
 ## Deploy Container 
 Use the yaml files in the examples directory for your desired deployment.
@@ -56,4 +56,4 @@ Use the yaml files in the examples directory for your desired deployment.
 
 ## Post-Deployment
 
-The post-deployment steps are outlined [here](k8s/Post-Deployment)
+The post-deployment steps are outlined [here](../../Post-Deployment)
