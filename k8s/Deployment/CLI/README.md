@@ -52,7 +52,7 @@ Use the yaml files in the examples directory for your desired deployment.
         --from-literal=pgUser=myuser \
         --from-literal=pgPassword=mypassword
 
-        kubectl apply -f Statefulset/examples/epas_v11_noredwood_statefulset_custom.yaml
+        kubectl apply -f Statefulset/examples/epas_v11_noredwood_statefulset_secret.yaml
 
 ## Post-Deployment
 
