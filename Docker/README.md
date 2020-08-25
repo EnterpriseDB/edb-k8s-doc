@@ -55,12 +55,12 @@ The following options are provided as environment variables for Docker deploymen
 
 ### Deployment Examples
 
-- PostgreSQL with all default options (v11 shown)
+- EDB Postgres Advanced Server with all default options (v11 shown)
   ```
   docker run --detach --name edb-postgres --env PG_INITDB=true \
   quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
   ```
- - PostgreSQL with all user-defined username/password options (v11 shown)
+ - EDB Postgres Advanced Server with all user-defined username/password options (v11 shown)
    ```
    docker run --detach --name edb-postgres --env PG_INITDB=true \
    --env PG_USER=myuser --env PG_PASSWORD=mypassword --env USE_SECRET=true \
