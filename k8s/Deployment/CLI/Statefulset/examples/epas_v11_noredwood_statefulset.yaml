@@ -40,6 +40,8 @@ spec:
           command: ["/bin/bash"]
           args: ["-ec", "/police.sh && /launch.sh"]
           env:
+            - name: PG_INITDB
+             value: "true"
             - name: PG_USER
               value: enterprisedb
             - name: PG_PASSWORD

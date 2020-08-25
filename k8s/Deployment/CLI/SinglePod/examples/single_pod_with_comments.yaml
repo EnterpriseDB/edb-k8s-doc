@@ -45,6 +45,9 @@ spec:
       command: ["/bin/bash"]
       args: ["-ec", "/police.sh && /launch.sh"]
       env:
+        - name: PG_INITDB
+          value: "true"
+        # Indicates initdb process should be run.
         - name: PG_USER
           # The initial superuser of the cluster.
           value: enterprisedb
