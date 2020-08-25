@@ -62,14 +62,11 @@ The following options are provided as environment variables for Docker deploymen
 
 - EDB Postgres Advanced Server with defaults (redwood on) 
   ```
-  docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword --env PG_INITDB=true  \
-  quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
+  docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword --env PG_INITDB=true quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
   ```
 - EDB Postgres Advanced Server with redwood mode off (v11 shown)
   ```  
-  docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword \
-  --env PG_INITDB=true --env NO_REDWOOD_COMPAT=true \
-  quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
+  docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword --env PG_INITDB=true --env NO_REDWOOD_COMPAT=true quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
   ```
 - PostgreSQL with persistent volume for data (v11 shown)
         
@@ -78,11 +75,10 @@ The following options are provided as environment variables for Docker deploymen
         mkdir <local-data-directory>
     
     ii. deploy container
-
-        docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword \
-        --env PG_INITDB=true --env PGDATA=/data -v <local-data-directory>:/data \
-        quay.io/edb/postgresql-11:latest bash -c '/police.sh && /launch.sh'
+       
+        docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v <local-data-directory>:/data quay.io/edb/postgresql-11:latest bash -c '/police.sh && /launch.sh'
         
+
 ## Verification
    ```
    docker ps
