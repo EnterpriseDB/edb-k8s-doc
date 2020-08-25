@@ -88,7 +88,7 @@ The following options are provided as environment variables for Docker deploymen
 
 1. Open a shell into the container:
    ```
-   docker exec -it EDB-Postgres bash
+   docker exec -it edb-postgres bash
    ```
 2. Log into the database (default postgres user):
    ```
