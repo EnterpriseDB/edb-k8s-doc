@@ -39,11 +39,12 @@ receiving access, log in to pull the desired images.
 ### Environment Variables
 The following options are provided as environment variables for Docker deployments:
 
-| Envrionment Variable | Default              | Description               |
-|----------------------|----------------------|---------------------------|
-| PG_USER              | enterprisedb         | Postgres user             |
+#### Immutable Options
+| Envrionment Variable | Required | Default              | Description               |
+|----------------------|----------|----------------------|---------------------------|
+| PG_USER              | n/a      | enterprisedb         | Postgres user. Will always be set to enterprisedb by container image.            |
 
-
+#### Mutable Options
 | Environment Variable | Required | Default              | Description               |
 |----------------------|----------|----------------------|---------------------------|
 | PG_PASSWORD          | Yes      | n/a                  | Postgres password. User must include value when deploying         |
