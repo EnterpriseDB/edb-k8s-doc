@@ -44,31 +44,34 @@ spec:
       imagePullPolicy: Always
       command: ["/bin/bash"]
       args: ["-ec", "/police.sh && /launch.sh"]
-      env:
-        - name: PG_INITDB
-          value: "true"
-        # Indicates initdb process should be run.
-        - name: PG_USER
-          # The initial superuser of the cluster.
-          value: enterprisedb
-        - name: PG_PASSWORD
-          # The password of PG_USER.
-          value: edb
-        - name: PGDATA
-          # Location of the datafiles.
-          value: /var/lib/edb/data
-        - name: PGDATA_WAL
-          # Location of the walfiles.
-          value: /var/lib/edb/wal
-        - name: PGDATA_ARCHIVE
-          # Location of the archive files.
-          value: /var/lib/edb/wal_archive
-        - name: NO_REDWOOD_COMPAT
-          # Disable redwood compatibility options on EDB Postgres Advanced Server.
-          value: "true"
-        - name: CHARSET
-          # The initial charactset of the cluster.
-          value: UTF8
+          env:
+            - name: PG_INITDB
+              value: "true"
+              # Indicates initdb process should be run.
+            - name: PG_USER
+              # The initial superuser of the cluster.
+              value: enterprisedb
+            - name: PG_PASSWORD
+              # The password of PG_USER.
+              value: edb
+            - name: PGDATA
+              # Location of the datafiles. Keep inline with the mountPath of the data volume.
+              value: /var/lib/edb/data
+            - name: PGDATA_WAL
+              # Location of the walfiles. Keep inline with the mountPath of the wal volume.
+              value: /var/lib/edb/wal
+            - name: PGDATA_ARCHIVE
+              # Location of the archive files. Keep inline with the mountPath of the walcrhive volume.
+              value: /var/lib/edb/wal_archive
+            - name: USE_CONFIGMAP
+              # Set this to "true" to read custom configuration from a configmap.
+              value: "true"
+            - name: NO_REDWOOD_COMPAT
+              # Disable redwood compatibility options on EDB Postgres Advanced Server.
+              value: "true"
+            - name: CHARSET
+              # The initial charactset of the cluster.
+              value: UTF8
       ports:
         - name: postgres
           # The Port that is exposed on these pods. Set to 5432 for Postgres.
@@ -95,3 +98,33 @@ spec:
           memory: 500Mi
           # Set this to configure the cpu hares available to the container under pressure.
           cpu: 1
+          volumeMounts:
+            - name: data
+              # If you change this path, also change the PGDATA environment variable defined earlier.
+              mountPath: /var/lib/edb/data
+            - name: wal
+              # If you change this path, also change the PGDATA_WAL environment variable defined earlier.
+              mountPath: /var/lib/edb/wal
+            - name: walarchive
+              # If you change this path, also change the PGDATA_ARCHIVE environment variable defined earlier.
+              mountPath: /var/lib/edb/wal_archive
+            - name: config-volume
+              # Use this if using a volume to mount a configmap with custom options.
+              mountPath: /config
+      volumes:
+        # Use this option to mount a configmap with custom options.
+        - name: config-volume
+          configMap:
+            name: edb-db-custom-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Amount of storage available for Postgres data.
+            storage: 5Gi
+    - metadata:
+        name: wal

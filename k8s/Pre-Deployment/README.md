@@ -52,10 +52,4 @@ Create the staging objects using the commands below:
     If running on OpenShift, also create securty context (SCC):
 
         kubectl apply -f scc.yaml
-        oc adm policy add-scc-to-user edb-operator-scc -z edb
-
-If deploying as a statefulset, also create configmap for custom postgresql.conf settings:
-
-- Configmap for custom postgresql.conf settings
-
-        kubectl apply -f configmap.yaml
+        oc adm policy add-scc-to-user edb-scc -z edb

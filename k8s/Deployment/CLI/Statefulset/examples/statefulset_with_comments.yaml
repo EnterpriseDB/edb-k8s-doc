@@ -78,7 +78,7 @@ spec:
               # Location of the archive files. Keep inline with the mountPath of the walcrhive volume.
               value: /var/lib/edb/wal_archive
             - name: USE_CONFIGMAP
-              # Set this to read custom configuration from a configmap.
+              # Set this to "true" to read custom configuration from a configmap.
               value: "true"
             - name: NO_REDWOOD_COMPAT
               # Disable redwood compatibility options on EDB Postgres Advanced Server.
@@ -123,6 +123,7 @@ spec:
               # If you change this path, also change the PGDATA_ARCHIVE environment variable defined earlier.
               mountPath: /var/lib/edb/wal_archive
             - name: config-volume
+              # Use this if using a volume to mount a configmap with custom options. 
               mountPath: /config
       volumes:
         # Use this option to mount a configmap with custom options.

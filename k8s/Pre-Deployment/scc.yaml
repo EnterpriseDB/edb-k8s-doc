@@ -13,7 +13,7 @@ fsGroup:
 groups: []
 kind: SecurityContextConstraints
 metadata:
-  name: edb-operator-scc
+  name: edb-scc
 priority: 10
 readOnlyRootFilesystem: false
 requiredDropCapabilities:
