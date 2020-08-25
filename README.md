@@ -2,7 +2,7 @@
 
 The world loves PostgreSQL. If you work with developers or data scientists or anyone wrangling data, you’ll probably see a sticker with the tusks and trunk of the PostgreSQL elephant on the lid of a nearby laptop. EDB has a lot to do with that.  We’ve been major contributors to PostgreSQL since the beginning, and we are proud to call thousands of boundary pushing customers our partners. 
 
-Proud though we are, we are not resting on our laurels. EDB continues to evolve the capabilities of the core PostgreSQL database server, but also extends the PostgresSQL and cloud ecosystems by providing tools and automation.  As you begin or expand your journey to Kubernetes for PostgreSQL, we want to be your trusted advisor. 
+Proud though we are, we are not resting on our laurels. EDB continues to evolve the capabilities of the core PostgreSQL database server, but also extends the PostgresSQL and cloud ecosystems by providing tools and automation.  As you begin or expand your journey to Kubernetes for PostgreSQL, we want to be your first choice.
 
 EDB Containers allow you to provision a high-availability EDB Postgres Advanced Server or PostgreSQL database in a cloud-agnostic environment that is certified for production deployment with any container platform technology. EDB containers provide open-source services and components that will help you build a portable, reliable, and responsive application environment.
 
