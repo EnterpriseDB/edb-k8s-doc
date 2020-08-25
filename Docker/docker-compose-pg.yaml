@@ -6,6 +6,4 @@ services:
     container_name: edb-postgres
     environment:
       - PG_INITDB=true
-      - USE_SECRET=true
-      - PG_USER=myapp
       - PG_PASSWORD=pa55w0rd

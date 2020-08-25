@@ -3,39 +3,39 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: edb-epas11-noredwood
-  name: edb-epas-v11-noredwood
+    app: edb-pg11
+  name: edb-pg-v11
 spec:
   type: ClusterIP
   ports:
   - name: postgres
-    port: 5444
+    port: 5432
     protocol: TCP
-    targetPort: 5444
+    targetPort: 5432
   selector:
-    app: edb-epas11-noredwood
-    statefulset.kubernetes.io/pod-name: edb-epas-v11-noredwood-0
+    app: edb-pg11
+    statefulset.kubernetes.io/pod-name: edb-pg-v11-0
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: edb-epas-v11-noredwood
+  name: edb-pg-v11
 spec:
   selector:
     matchLabels:
-      app: edb-epas11-noredwood
-  serviceName: edb-epas-v11-noredwood
+      app: edb-pg11
+  serviceName: edb-pg-v11
   replicas: 1 # by default is 1
   template:
     metadata:
       labels:
-        app: edb-epas11-noredwood
+        app: edb-pg11
     spec:
       serviceAccountName: edb
       terminationGracePeriodSeconds: 10
       containers:
         - name: edb-database
-          image: "quay.io/edb/postgres-advanced-server-11:latest"
+          image: "quay.io/edb/postgresql-11:latest"
           imagePullPolicy: Always
           command: ["/bin/bash"]
           args: ["-ec", "/police.sh && /launch.sh"]
@@ -52,24 +52,24 @@ spec:
               value: /var/lib/edb/wal
             - name: PGDATA_ARCHIVE
               value: /var/lib/edb/wal_archive
-            - name: NO_REDWOOD_COMPAT
+            - name: USE_CONFIGMAP
               value: "true"
             - name: CHARSET
               value: UTF8
           ports:
             - name: postgres
-              containerPort: 5444
+              containerPort: 5432
               protocol: TCP
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 10
             tcpSocket:
-              port: 5444
+              port: 5432
           readinessProbe:
             initialDelaySeconds: 10
             periodSeconds: 10
             tcpSocket:
-              port: 5444
+              port: 5432
           resources:
             limits:
               memory: 1Gi
@@ -84,6 +84,12 @@ spec:
               mountPath: /var/lib/edb/wal
             - name: walarchive
               mountPath: /var/lib/edb/wal_archive
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: edb-db-custom-config
   volumeClaimTemplates:
     - metadata:
         name: data

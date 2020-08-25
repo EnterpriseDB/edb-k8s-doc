@@ -40,6 +40,8 @@ spec:
           command: ["/bin/bash"]
           args: ["-ec", "/police.sh && /launch.sh"]
           env:
+            - name: PG_INITDB
+              value: "true"
             - name: PG_USER
               value: enterprisedb
             - name: PG_PASSWORD
@@ -51,7 +53,7 @@ spec:
             - name: PGDATA_ARCHIVE
               value: /var/lib/edb/wal_archive
             - name: USE_CONFIGMAP
-              value: "true"
+              value: "false"
             - name: CHARSET
               value: UTF8
           ports:
@@ -82,12 +84,6 @@ spec:
               mountPath: /var/lib/edb/wal
             - name: walarchive
               mountPath: /var/lib/edb/wal_archive
-            - name: config-volume
-              mountPath: /config
-      volumes:
-        - name: config-volume
-          configMap:
-            name: edb-db-custom-config
   volumeClaimTemplates:
     - metadata:
         name: data

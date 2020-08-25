@@ -42,6 +42,8 @@ spec:
           value: /var/lib/edb/wal
         - name: PGDATA_ARCHIVE
           value: /var/lib/edb/wal_archive
+        - name: USE_CONFIGMAP
+          value: "true"
         - name: CHARSET
           value: UTF8
       ports:
@@ -65,3 +67,10 @@ spec:
         requests:
           memory: 500Mi
           cpu: 1
+      volumeMounts:
+        - name: config-volume
+          mountPath: /config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: edb-db-custom-config

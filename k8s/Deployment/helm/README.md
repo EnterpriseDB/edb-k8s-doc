@@ -3,7 +3,7 @@ Deploy PostgreSQL and EDB Postgres Advanced Server containers via helm charts us
 
 ## Pre-deployment Steps
 
-Complete pre-deployment steps outlined in k8s/Pre-Deployment
+Complete pre-deployment steps outlined [here](k8s/Pre-Deployment)
 
 ## Install Helm
 install helm by following the instructions [here](https://helm.sh/docs/intro/install/)
@@ -48,4 +48,4 @@ NOTE: For a complete list of available options in the yaml file, see charts/edb/
 
 ## Post-Deployment
 
-The post-deployment steps are outlined in k8s/Post-Deployment
+The post-deployment steps are outlined [here](k8s/Post-Deployment)
