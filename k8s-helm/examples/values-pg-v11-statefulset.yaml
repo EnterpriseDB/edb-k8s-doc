@@ -19,7 +19,7 @@ users:
   pgPassword: "edb"
 
 config:
-  customConfigmap: "edb-db-custom-config"
+  customConfigmap: "edb-helm-db-custom-config"
 
 resources:
   limits:

@@ -24,15 +24,15 @@ Complete all of the prerequisites before using the Helm Charts. The prerequisite
    For more information, refer to [Creating a Secret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-by-providing-credentials-on-the-command-line) documentation provided by k8s.io.
 4. Create a service account in the namespace to run the pods securely using the following command:
    ```
-   kubectl apply -f examples/service-account.yaml -n <your-namespace> 
+   kubectl apply -f setup/service-account.yaml -n <your-namespace> 
    ```
 5. Create a configmap in the namespace to deploy the statefulset examples provided by EDB; a configmap will be required for any deployment overriding default postgres.conf settings.
    ```
-   kubectl apply -f examples/configmap.yaml -n <your-namespace> 
+   kubectl apply -f setup/configmap.yaml -n <your-namespace> 
    ``` 
 6. (For Openshift), the appropriate privileges and security context constraints must be created and assigned using the following commands:
    ```
-   kubectl apply -f examples/scc.yaml
+   kubectl apply -f setup/scc.yaml
    oc adm policy add-scc-to-user edb-helm-scc -z edb-helm 
    ```
    The sample SCC provided includes the required permissions for successful deployment to OpenShift 4.4. It assumes the `edb-helm` service account is being used.  Change the commands and file if a different service account will be used.
@@ -41,9 +41,9 @@ Complete all of the prerequisites before using the Helm Charts. The prerequisite
  
 ## Deploying
 
-Several sample values.yaml files are provided. Please refer to charts/postgresql/values.yaml for a list of all options as well as a description of how they work. Use the following command to list all available samples:
+Several example values.yaml files are provided. Please refer to charts/postgresql/values.yaml for a list of all options as well as a description of how they work. Use the following command to list all available examples:
 ```
-ls charts/postgresql/
+ls examples/
 ```
 To use the charts with the provided sample values files, you must:
 * **Accept the [End User License Agreement (EULA)](https://www.enterprisedb.com/limited-use-license) by changing the default for `acceptEULA` from No to Yes**
@@ -55,13 +55,13 @@ For deploying a single pod, run one of the following commands depending on the d
 * PostgreSQL v11: 
   ```
   helm install postgres11-single charts/postgresql \
-  -f charts/postgresql/values-pg-v11-single.yaml \
+  -f examples/values-pg-v11-single.yaml \
   -n <your-namespace>
   ```
 * Advanced Server v11 compatibility with Oracle: 
   ```
   helm install epas11-single charts/postgresql \
-  -f charts/postgresql/values-epas-v11-redwood-single.yaml \
+  -f examples/values-epas-v11-redwood-single.yaml \
   -n <your-namespace>
   ```
 
@@ -71,13 +71,13 @@ For deploying a statefulset, run one of the following commands dependinig on the
 * PostgreSQL v11: 
   ```
   helm install postgres11-statefulset charts/postgresql \
-  -f charts/postgresql/values-pg-v11-statefulset.yaml \
+  -f examples/values-pg-v11-statefulset.yaml \
   -n <your-namespace>
   ```
 * Advanced Server v11 with compatibility with Oracle: 
   ```
   helm install epas11-statefulset charts/postgresql \
-  -f charts/postgresql/values-epas-v11-redwood-statefulset.yaml \
+  -f examples/values-epas-v11-redwood-statefulset.yaml \
   -n <your-namespace>
   ```
 
@@ -124,7 +124,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
 
 1. Forward a local port to the database port in the container:
    ```
-   kubectl port-forward edb-epas-v11-redwood-single -n <your-namespace> <local-port>:5444
+   kubectl port-forward edb-epas-v11-redwood-single <local-port>:5444 -n <your-namespace> 
    ```
 2. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step
 ## Deleting Kubernetes Objects
