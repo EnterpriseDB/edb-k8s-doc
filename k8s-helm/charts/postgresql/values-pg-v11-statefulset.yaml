@@ -1,0 +1,33 @@
+# The name of the Kubernetes statefulset and service.
+name: edb-pg-v11-statefulset
+label: edb-pg11
+
+serviceAccountName: edb-helm
+imagePullSecrets: quay-regsecret
+
+acceptEULA: "No"
+
+image: "quay.io/edb/postgresql-11:latest"
+
+pgconfig:
+  port: 5432
+
+deploymentType: Statefulset
+
+users:
+  pgUser: "enterprisedb"
+  pgPassword: "edb"
+
+config:
+  customConfigmap: "edb-db-custom-config"
+
+resources:
+  limits:
+    cpu: 2
+    memory: 1Gi
+  requests:
+    cpu: 1
+    memory: 500Mi
+  dataSize: 5Gi
+  walSize: 5Gi
+  archiveSize: 5Gi
