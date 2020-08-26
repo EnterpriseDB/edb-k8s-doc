@@ -156,6 +156,6 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
 3. If the same namespace will be used again for deployments, skip this step. Otherwise, the following commands delete installed prerequisites: 
    ```
    kubectl delete secret quay-regsecret -n <your-namespace>
-   kubectl delete -f examples/service-account.yaml -n <your-namespace> 
-   kubectl delete -f examples/configmap.yaml -n <your-namespace> 
+   kubectl delete -f setup/service-account.yaml -n <your-namespace> 
+   kubectl delete -f setup/configmap.yaml -n <your-namespace> 
    ```
