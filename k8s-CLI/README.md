@@ -4,7 +4,7 @@ Some customers may prefer to deploy EDB containers using the native CLI (kubectl
 ## Prerequisites
 
 Complete all of the prerequisites before deploying using the CLI. The prerequisites are provided in the sample files. You can modify the sample files as required by your deployment. 
-1. Obtain access to a Kubernetes cluster.   
+1. Obtain access to an OpenShift 4.4 Kubernetes cluster.   
 2. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
