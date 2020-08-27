@@ -1,3 +1,0 @@
-{{- if not (eq .Values.acceptEULA "Yes") }}
-{{- fail "Please accept the license agreement in the values file." }}
-{{- end }}
