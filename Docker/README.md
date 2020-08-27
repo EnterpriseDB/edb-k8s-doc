@@ -1,8 +1,9 @@
-# Deploy Postgres Containers Using Docker Command Line
-Deploy PostgreSQL and EDB Postgres Advanced Server containers from the Docker command line using the steps below. 
+# Docker
+Some customers may prefer to deploy EDB containers using Docker rather than using Helm, the Operator or the native Kubernetes CLI. Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Docker.
+ 
 
 ## Prerequisites
-Before deploying the images using Docker, please ensure the prerequisite requirements have been met. 
+Complete all of the prerequisites before deploying with Docker. 
 
 1. Install Docker
 For Windows/macOS, installing [Docker Desktop](https://www.docker.com/products/docker-desktop) is recommended
@@ -23,7 +24,7 @@ receiving access, log in to pull the desired images.
    
 4. Download Postgres Images
 
-   Download PostgreSQL and EDB Postgres Advanced Server Postgres images from quay.io
+   Download PostgreSQL and EDB Postgres Advanced Server container images from quay.io
    ```
    docker pull quay.io/edb/postgresql-11:latest
    docker pull quay.io/edb/postgres-advanced-server-11:latest
@@ -34,7 +35,7 @@ receiving access, log in to pull the desired images.
    docker images
    ```
 
-## Deploying
+## Deploying with Docker
 
 ### Environment Variables
 The following options are provided as environment variables for Docker deployments:
@@ -56,19 +57,22 @@ The following options are provided as environment variables for Docker deploymen
 | CHARSET              | No       | UTF8                 | Character set. Override to another valid character set if desired             |
 | NO_REDWOOD_COMPAT    | No       | false                | Redwood mode for EPAS     |
 
-**NOTE**: For information on how to use docker volumes, refer to the documentation [here](https://docs.docker.com/storage/volumes/).
 
 ### Deployment Examples
 
-- EDB Postgres Advanced Server with defaults (redwood on) 
+* EDB Postgres Advanced Server with defaults (redwood on) 
   ```
-  docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword --env PG_INITDB=true quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
+  docker run --detach --name edb-postgres \
+  --env PG_PASSWORD=mypassword --env PG_INITDB=true \
+  quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
   ```
-- EDB Postgres Advanced Server with redwood mode off (v11 shown)
+* EDB Postgres Advanced Server with redwood mode off (v11 shown)
   ```  
-  docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword --env PG_INITDB=true --env NO_REDWOOD_COMPAT=true quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
+  docker run --detach --name edb-postgres \
+  --env PG_PASSWORD=mypassword --env PG_INITDB=true --env NO_REDWOOD_COMPAT=true \
+  quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
   ```
-- PostgreSQL with persistent volume for data (v11 shown)
+* PostgreSQL with persistent volume for data (v11 shown)
         
     i. create local data directory
  
@@ -76,21 +80,28 @@ The following options are provided as environment variables for Docker deploymen
     
     ii. deploy container
        
-        docker run --detach --name edb-postgres --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v <local-data-directory>:/data quay.io/edb/postgresql-11:latest bash -c '/police.sh && /launch.sh'
+        docker run --detach --name edb-postgres \
+        --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v <local-data-directory>:/data \
+        quay.io/edb/postgresql-11:latest bash -c '/police.sh && /launch.sh'
         
+     For more information, refer to [Using Storage Volumes](https://docs.docker.com/storage/volumes/) documention from Docker.
 
 ## Verification
+
+Once the container has been deployed, run the following command to verify the status of the pods:
    ```
    docker ps
    ```
    
-## Using Postgres
+## Using PostgreSQL
+
+After verifying successful deployment, the PostgreSQL or EDB Postgres Advanced Server containers are ready for use.
 
 1. Open a shell into the container:
    ```
    docker exec -it edb-postgres bash
    ```
-2. Log into the database (default postgres user):
+2. Log into the database (default user):
    ```
    $PGBIN/psql -d postgres -U enterprisedb
    ```
@@ -101,13 +112,13 @@ The following options are provided as environment variables for Docker deploymen
    postgres=# insert into mytable1 values ('hi from pg 11');
    postgres=# select * from mytable1;
    ```
-4. Check Redwood Mode (EPAS):      
+4. Check Redwood Mode (EPAS):   
    ```
-   postgres=# show edb_redwood_date;
+   postgres=# show db_dialect;
    ```
    ```
-   edb_redwood_date
-   ------------------
-   off
+   db_dialect
+   -------------
+   redwood
    (1 row)
    ```
