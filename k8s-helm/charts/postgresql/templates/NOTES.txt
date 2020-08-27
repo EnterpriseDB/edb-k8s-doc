@@ -1,10 +1,15 @@
 
 Your Release is named {{ .Release.Name | quote }}
 
-If deployment type is "Pod", then a single database pod will be installed in a single Kubernetes cluster. This deployment type will not provide 
+{{- if contains "Statefulset" .Values.deploymentType }}
+The number of replicas should not be scaled greater than 1 because each container will have its own copy of data and
+be considered a standalone instance.  In order to have data redundancy, a replication and a solution such as Stolon,
+Patroni, etc will be needed to have availability beyond that provided by the Kubernetes.  EDB’s Kubernetes Operator can
+be leveraged to achieve high availability with Stolon.
+{{- else }}
+A single database pod will be installed in a single Kubernetes cluster. This deployment type will not provide 
 data redundancy and it is not recommended for production use.
+{{- end }}
 
-Please utilize the deployment type of "Statefulset" with replicas set to more than 1 if redundancy is desired and for production.
-
-An EDB subscription is required for production use as well.
+An EDB subscription is required when beyond the scope of the Limited Use License found at https://www.enterprisedb.com/limited-use-license.
 

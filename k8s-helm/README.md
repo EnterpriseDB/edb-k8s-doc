@@ -1,15 +1,17 @@
-# EDB-HELM
-This repository contains Helm charts and examples for deploying PostgreSQL and EDB Postgres Advanced Server container images to Kubernetes as a statefulset or a single pod.
+# Helm
+Some customers may prefer to deploy EDB containers using Helm rather than using Docker, the Operator or the native Kubernetes CLI.  Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Kubernetes as a statefulset or single pod.
 
 ## Prerequisites
+
 Complete all of the prerequisites before using the Helm Charts. The prerequisites are provided in the sample files. You can modify the sample files as required by your deployment. 
-1. Obtain access to a Kubernetes cluster.   
-2. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
+1. Install [Helm](https://helm.sh/docs/intro/install/)
+2. Obtain access to a Kubernetes cluster.   
+3. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
    ```
    For more information, refer to the [Creating a Namespace](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace) documentation provided by k8s.io.
-3. Create a secret for pulling images from quay.io in the namespace; the secret will used when deploying container images:
+4. Create a secret for pulling images from quay.io in the namespace; the secret will used when deploying container images:
    ```
    kubectl create secret docker-registry <regcred> --docker-server=<your-registry-server> \
    --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email> \
@@ -22,15 +24,15 @@ Complete all of the prerequisites before using the Helm Charts. The prerequisite
    * `<your-pword>` is your quay.io password  
    * `<your-email>` is your email address as used to retrieve the quay.io credentials
    For more information, refer to [Creating a Secret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-by-providing-credentials-on-the-command-line) documentation provided by k8s.io.
-4. Create a service account in the namespace to run the pods securely using the following command:
+5. Create a service account in the namespace to run the pods securely using the following command:
    ```
    kubectl apply -f setup/service-account.yaml -n <your-namespace> 
    ```
-5. Create a configmap in the namespace to deploy the statefulset examples provided by EDB; a configmap will be required for any deployment overriding default postgres.conf settings.
+6. Create a configmap in the namespace to deploy the statefulset examples provided by EDB; a configmap will be required for any deployment overriding default postgres.conf settings.
    ```
    kubectl apply -f setup/configmap.yaml -n <your-namespace> 
    ``` 
-6. (For Openshift), the appropriate privileges and security context constraints must be created and assigned using the following commands:
+7. (For Openshift), the appropriate privileges and security context constraints must be created and assigned to the service account by using the following commands:
    ```
    kubectl apply -f setup/scc.yaml
    oc adm policy add-scc-to-user edb-helm-scc -z edb-helm 
@@ -39,9 +41,9 @@ Complete all of the prerequisites before using the Helm Charts. The prerequisite
    
    For more information on SCC, refer to Openshift documentation. 
  
-## Deploying
+## Deploying with Helm
 
-Several example values.yaml files are provided. Please refer to charts/postgresql/values.yaml for a list of all options as well as a description of how they work. Use the following command to list all available examples:
+Several example values.yaml files are provided. Please refer to `charts/postgresql/values.yaml` for a list of all options as well as a description of how they work. Use the following command to list all available examples:
 ```
 ls examples/
 ```
@@ -51,7 +53,8 @@ To use the charts with the provided sample values files, you must:
 
 
 ### Deploying a Single pod
-For deploying a single pod, run one of the following commands depending on the distribution preferred:
+
+For deploying a single pod, run one of the following commands depending on the preferred distribution:
 * PostgreSQL v11: 
   ```
   helm install postgres11-single charts/postgresql \
@@ -81,22 +84,24 @@ For deploying a statefulset, run one of the following commands dependinig on the
   -n <your-namespace>
   ```
 
-Note: statefulsets may be scaled greater than 1 but will not have streaming replication enabled or availability beyond that provided by the Kubernetes cluster without implementing database cluster management solutions such as Stolon, Patroni, etc
+**Note:** The statefulset chart is configured with 1 replica by default and is not shown in the values.yaml examples.  Overriding the number of replicas to be greater than 1 will not achieve data redundancy; it will create two standalone instances each with unique data.  
 
 ## Verification
+
 Once the container has been deployed, run the following command to verify the status of the pods:
 ```
 kubectl get pods -n <your-namespace> 
 ```
 If the deployment is successful, the output of the previous command for EDB Postgres Advanced Server v11 will show all pods ready and a status of Running as follows:
 
-    NAME                               READY   STATUS    RESTARTS   AGE
-    edb-epas-v11-redwood-single        1/1     Running   0          2m7s
-    edb-epas-v11-redwood-statefulset   1/1     Running   0          3m12s
+    NAME                                 READY   STATUS    RESTARTS   AGE
+    edb-epas-v11-redwood-single          1/1     Running   0          2m7s
+    edb-epas-v11-redwood-statefulset-0   1/1     Running   0          3m12s
 
 ## Using Postgres
 
 After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or EDB Postgres Advanced Server containers are ready for use.
+
 ### Accessing the deployment using kubectl
 
 1. Open a shell into the container:
@@ -127,7 +132,9 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    kubectl port-forward edb-epas-v11-redwood-single <local-port>:5444 -n <your-namespace> 
    ```
 2. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step
+
 ## Deleting Kubernetes Objects
+
 1. The following commands delete the Helm charts installed with the deployments: 
    * PostgreSQL v11: 
      ```
@@ -139,6 +146,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
      helm delete epas11-single -n <your-namespace>
      helm delete epas11-statefulset -n <your-namespace>
      ```
+     
 2. The following commands delete any PVC's created with statefulset deployments:
    * PostgreSQL v11: 
      ```
