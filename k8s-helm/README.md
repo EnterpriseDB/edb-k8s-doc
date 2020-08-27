@@ -1,10 +1,10 @@
 # Helm
-Some customers may prefer to deploy EDB containers using Helm rather than using Docker, the Operator or the native Kubernetes CLI.  Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Kubernetes as a statefulset or single pod.
+Some customers may prefer to deploy EDB containers using Helm rather than using Docker, the Operator or the native Kubernetes CLI.  Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Kubernetes as a StatefulSet or single pod.
 
 ## Prerequisites
 
 Complete all of the prerequisites before using the Helm Charts. The prerequisites are provided in the sample files. You can modify the sample files as required by your deployment. 
-1. Install [Helm](https://helm.sh/docs/intro/install/)
+1. Install [Helm 3](https://helm.sh/docs/intro/install/)
 2. Obtain access to a Kubernetes cluster.   
 3. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
@@ -28,11 +28,11 @@ Complete all of the prerequisites before using the Helm Charts. The prerequisite
    ```
    kubectl apply -f setup/service-account.yaml -n <your-namespace> 
    ```
-6. Create a configmap in the namespace to deploy the statefulset examples provided by EDB; a configmap will be required for any deployment overriding default postgres.conf settings.
+6. (For StatefulSet examples), create a configmap to override the default postgres.conf settings in the namespace; the example configmap is simply showcasing the functionality provided.
    ```
    kubectl apply -f setup/configmap.yaml -n <your-namespace> 
    ``` 
-7. (For Openshift), the appropriate privileges and security context constraints must be created and assigned to the service account by using the following commands:
+7. (For OpenShift), the appropriate privileges and security context constraints (SCC) must be created and assigned to the service account by using the following commands:
    ```
    kubectl apply -f setup/scc.yaml
    oc adm policy add-scc-to-user edb-helm-scc -z edb-helm 
@@ -68,9 +68,9 @@ For deploying a single pod, run one of the following commands depending on the p
   -n <your-namespace>
   ```
 
-### Deploying a Statefulset
+### Deploying a StatefulSet
 
-For deploying a statefulset, run one of the following commands dependinig on the preferred distribution:
+For deploying a StatefulSet, run one of the following commands dependinig on the preferred distribution:
 * PostgreSQL v11: 
   ```
   helm install postgres11-statefulset charts/postgresql \
@@ -84,7 +84,7 @@ For deploying a statefulset, run one of the following commands dependinig on the
   -n <your-namespace>
   ```
 
-**Note:** The statefulset chart is configured with 1 replica by default and is not shown in the values.yaml examples.  Overriding the number of replicas to be greater than 1 will not achieve data redundancy; it will create two standalone instances each with unique data.  
+**Note:** The StatefulSet chart is configured with 1 replica by default and is not shown in the values.yaml examples.  Overriding the number of replicas to be greater than 1 will not achieve data redundancy; it will create two standalone instances each with unique data.  
 
 ## Verification
 
@@ -98,7 +98,7 @@ If the deployment is successful, the output of the previous command for EDB Post
     edb-epas-v11-redwood-single          1/1     Running   0          2m7s
     edb-epas-v11-redwood-statefulset-0   1/1     Running   0          3m12s
 
-## Using Postgres
+## Using PostgreSQL
 
 After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or EDB Postgres Advanced Server containers are ready for use.
 
@@ -147,7 +147,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
      helm delete epas11-statefulset -n <your-namespace>
      ```
      
-2. The following commands delete any PVC's created with statefulset deployments:
+2. The following commands delete any PVC's created with StatefulSet deployments:
    * PostgreSQL v11: 
      ```
      kubectl delete pvc data-edb-pg-v11-statefulset-0 -n <your-namespace>
