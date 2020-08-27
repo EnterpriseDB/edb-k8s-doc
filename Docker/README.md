@@ -1,5 +1,5 @@
 # Docker
-Some customers may prefer to deploy EDB containers using Docker rather than using Helm, the Operator or the native Kubernetes CLI. Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Docker.
+Some customers may prefer to deploy EDB containers using Docker rather than using Helm, the Operator, or the native Kubernetes CLI. Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Docker.
  
 
 ## Prerequisites
