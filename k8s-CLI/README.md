@@ -10,7 +10,7 @@ Complete all of the prerequisites before deploying using the CLI. The prerequisi
    kubectl create ns <your-namespace>
    ```
    For more information, refer to the [Creating a Namespace](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace) documentation provided by k8s.io.
-3. Create a secret for pulling images from quay.io in the namespace; the secret will used when deploying container images:
+3. Create a secret for pulling images from quay.io in the namespace; the secret will be used when deploying container images:
    ```
    kubectl create secret docker-registry <regcred> --docker-server=<your-registry-server> \
    --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email> \
@@ -28,7 +28,7 @@ Complete all of the prerequisites before deploying using the CLI. The prerequisi
    kubectl apply -f setup/service-account.yaml -n <your-namespace> 
    ```
 
-5. (For Openshift), the appropriate privileges and security context constraints must be created and assigned to the service account by using the following commands:
+5. (For OpenShift), the appropriate privileges and security context constraints must be created and assigned to the service account by using the following commands:
    ```
    kubectl apply -f setup/scc.yaml
    oc adm policy add-scc-to-user edb-cli-scc -z edb-cli 
@@ -119,19 +119,30 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    $PGBIN/psql -d postgres -U enterprisedb
    ```
 3. Run sample queries:
-    ```
-    edb=# select version();
-    edb=# create table mytable1(var1 text);
-    edb=# insert into mytable1 values ('hi from epas 11');
-    edb=# select * from mytable1;
-    ```
+   ```
+   edb=# select version();
+   edb=# create table mytable1(var1 text);
+   edb=# insert into mytable1 values ('hi from epas 11');
+   edb=# select * from mytable1;
+   ```
+4. Check Redwood Mode (EPAS):   
+   ```
+   postgres=# show db_dialect;
+   ```
+   ```
+   db_dialect
+   -------------
+   redwood
+   (1 row)
+   ```
+   
 ### Accessing the deployment from a client application
 
 1. Forward a local port to the database port in the container:
    ```
    kubectl port-forward edb-epas-v11-noredwood-single <local-port>:5444 -n <your-namespace>
    ```
-2. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step
+2. Access the PostgreSQL database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step
 
 ## Deleting Kubernetes Objects
 
