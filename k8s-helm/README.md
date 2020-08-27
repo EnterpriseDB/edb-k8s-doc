@@ -1,17 +1,17 @@
 # Helm
-Some customers may prefer to deploy EDB containers using Helm rather than using Docker, the Operator or the native Kubernetes CLI.  Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Kubernetes as a StatefulSet or single pod.
+Some customers may prefer to deploy EDB containers using Helm rather than using Docker, the Operator, or the native Kubernetes CLI.  Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Kubernetes as a StatefulSet or single pod.
 
 ## Prerequisites
 
-Complete all of the prerequisites before using the Helm Charts. The prerequisites are provided in the sample files. You can modify the sample files as required by your deployment. 
-1. Install [Helm 3](https://helm.sh/docs/intro/install/)
+Complete all of the prerequisites before using the Helm charts. The prerequisites are provided in the sample files. You can modify the sample files as required by your deployment. 
+1. Install [Helm 3](https://helm.sh/docs/intro/install/).
 2. Obtain access to a Kubernetes cluster.   
 3. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
    ```
    For more information, refer to the [Creating a Namespace](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace) documentation provided by k8s.io.
-4. Create a secret for pulling images from quay.io in the namespace; the secret will used when deploying container images:
+4. Create a secret for pulling images from quay.io in the namespace; the secret will be used when deploying container images:
    ```
    kubectl create secret docker-registry <regcred> --docker-server=<your-registry-server> \
    --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email> \
@@ -28,7 +28,7 @@ Complete all of the prerequisites before using the Helm Charts. The prerequisite
    ```
    kubectl apply -f setup/service-account.yaml -n <your-namespace> 
    ```
-6. (For StatefulSet examples), create a configmap to override the default postgres.conf settings in the namespace; the example configmap is simply showcasing the functionality provided.
+6. (For StatefulSet examples), create a configmap to override the default postgres.conf settings in the namespace.  The example configmap is only showcasing the functionality in StatefulSet examples provided; however, a custom postgres.conf can be provided for single pod or StatefulSet deployments if desired. 
    ```
    kubectl apply -f setup/configmap.yaml -n <your-namespace> 
    ``` 
@@ -92,7 +92,7 @@ Once the container has been deployed, run the following command to verify the st
 ```
 kubectl get pods -n <your-namespace> 
 ```
-If the deployment is successful, the output of the previous command for EDB Postgres Advanced Server v11 will show all pods ready and a status of Running as follows:
+If the deployment is successful, the output of the previous command for EDB Postgres Advanced Server v11 will show all pods ready, and a status of Running as follows:
 
     NAME                                 READY   STATUS    RESTARTS   AGE
     edb-epas-v11-redwood-single          1/1     Running   0          2m7s
@@ -119,12 +119,23 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    $PGBIN/psql -d postgres -U enterprisedb
    ```
 3. Run sample queries:
-    ```
-    edb=# select version();
-    edb=# create table mytable1(var1 text);
-    edb=# insert into mytable1 values ('hi from epas 11');
-    edb=# select * from mytable1;
-    ```
+   ```
+   edb=# select version();
+   edb=# create table mytable1(var1 text);
+   edb=# insert into mytable1 values ('hi from epas 11');
+   edb=# select * from mytable1;
+   ```
+4. Check Redwood Mode (EPAS):   
+   ```
+   postgres=# show db_dialect;
+   ```
+   ```
+   db_dialect
+   -------------
+   redwood
+   (1 row)
+   ```
+   
 ### Accessing the deployment from a client application
 
 1. Forward a local port to the database port in the container:
