@@ -1,0 +1,172 @@
+---
+apiVersion: v1
+kind: Service
+# Exposes the Service on an internal IP in the cluster. This type makes the Service only reachable from within the cluster.
+# Valid values are ClusterIP, NodePort, and LoadBalancer. See https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/ for more info.
+metadata:
+  labels:
+    # Use the same label for all parts of the application.
+    app: edb-epas11-redwood
+  # The name of the service (same as the statefulset name).
+  name: edb-epas-v11-redwood
+spec:
+  # Can be changed to allow for external trafic.
+  # As an alternative for external connectivity look at Jaeger or Traefik.
+  type: ClusterIP
+  ports:
+  - name: postgres
+    # Change this to have the service listen on another port.
+    port: 5444
+    protocol: TCP
+    # For PostgreSQL statefulsets, set this to 5432.
+    targetPort: 5444
+  selector:
+    # Must conform to the label of the statefulset.
+    app: edb-epas11-redwood
+    # Forward trafic to pod-0 only.
+    statefulset.kubernetes.io/pod-name: edb-epas-v11-redwood-0
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  # The name of the statefulset (same as the service name).
+  name: edb-epas-v11-redwood
+spec:
+  selector:
+    matchLabels:
+      # Needs to conform to the label of the statefulset.
+      app: edb-epas11-redwood
+  # Must point to the name of the service defined earlier.
+  serviceName: edb-epas-v11-redwood
+  # Defines the number of pods in the statefulset. Default is 1.
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # Use the same label for all parts of the application.
+        app: edb-epas11-redwood
+    spec:
+      # The service account used for deploying the statefulset.
+      # The service account should have sufficient permissions.
+      serviceAccountName: edb-cli
+      terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      # Secret name to be used for pulling images from quay.io repository
+      - name: quay-regsecret
+      containers:
+        - name: edb-database
+          # Name of the image to be used for running Postgres
+          image: "quay.io/enterprisedb/postgres11-advanced-server:latest"
+          # Frequency that a new version of the image should be pulled; "Always" will pull on every reschedule.
+          imagePullPolicy: Always
+          command: ["/bin/bash"]
+          args: ["-ec", "/police.sh && /launch.sh"]
+          env:
+              # The database will be initialized on startup by default.  This value should not need to be changed.
+            - name: PG_INITDB
+              value: "true"
+              # Ignored if secretName exists; the superuser name generally will be (enterprisedb or postgres).
+            - name: PG_USER
+              value: enterprisedb
+              # Ignored if secretName exists; the superuser password MUST be set by the customer if not using secrets.
+            - name: PG_PASSWORD
+              value: edb
+              # The default Postgres data directory. Change path if desired
+            - name: PGDATA
+              value: /var/lib/edb/data
+              # The default Postgres write ahead log directory. Change path if desired
+            - name: PGDATA_WAL
+              value: /var/lib/edb/wal
+              # The default Postgres write ahead log archive directory. Change path if desired
+            - name: PGDATA_ARCHIVE
+              value: /var/lib/edb/wal_archive
+              # Set this to "true" to read custom postgresql.conf settings from a configmap.
+            - name: USE_CONFIGMAP
+              value: "true"
+              # EDB Postgres Advanced Server installs compatibility with Oracle (redwood mode) by default. Set to "true" if compatibility with Oracle is not needed.
+            - name: NO_REDWOOD_COMPAT
+              value: "false"
+              # The default character set used will be UTF8 for the database cluster.  Change to another valid value if desired.
+            - name: CHARSET
+              value: UTF8
+          ports:
+              # The port where Postgres will run and be used for the services. The container image has port 5444 and 5432 exposed by default.
+              # 5444 is generally used for EDB Postgres Advanced Server and 5432 is generally used for PostgreSQL.
+            - name: postgres
+              containerPort: 5444
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 5444
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            tcpSocket:
+              port: 5444
+          resources:
+            # See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits for more info.
+            # 1000m = 1 uniCore for an EDB subscription
+            limits:
+              # Set this to configure the max amount of memory available to the container.
+              memory: 1Gi
+              # Set this to configure the max amount of cpu available to the container.
+              cpu: 2
+            requests:
+              # Set this to configure the memory shares available to the container under pressure.
+              memory: 500Mi
+              # Set this to configure the cpu hares available to the container under pressure.
+              cpu: 1
+          volumeMounts:
+            - name: data
+              # If you change this path, also change the PGDATA environment variable defined earlier.
+              mountPath: /var/lib/edb/data
+            - name: wal
+              # If you change this path, also change the PGDATA_WAL environment variable defined earlier.
+              mountPath: /var/lib/edb/wal
+            - name: walarchive
+              # If you change this path, also change the PGDATA_ARCHIVE environment variable defined earlier.
+              mountPath: /var/lib/edb/wal_archive
+            - name: config-volume
+              # Mount path of volume where a custom_postgresql.conf will be provided that will include any overrides to default postgresql.conf values
+              mountPath: /config
+      volumes:
+          # Name of volume where a custom_postgresql.conf will be provided that will include any overrides to default postgresql.conf values
+        - name: config-volume
+          configMap:
+            # Name of configmap where a custom_postgresql.conf will be provided that will include any overrides to default postgresql.conf values
+            name: edb-db-custom-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        # Type of storage that the storage class should provide.
+        storageClassName: standard
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Amount of storage available for Postgres data.
+            storage: 5Gi
+    - metadata:
+        name: wal
+      spec:
+        storageClassName: standard
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Amount of storage available for wal files.
+            storage: 5Gi
+    - metadata:
+        name: walarchive
+      spec:
+        # Type of storage that the storage class should provide.
+        storageClassName: standard
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            # Amount of storage available for wal archives.
+            storage: 5Gi
