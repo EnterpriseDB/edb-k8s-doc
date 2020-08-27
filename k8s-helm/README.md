@@ -5,7 +5,7 @@ Some customers may prefer to deploy EDB containers using Helm rather than using 
 
 Complete all of the prerequisites before using the Helm charts. The prerequisites are provided in the sample files. You can modify the sample files as required by your deployment. 
 1. Install [Helm 3](https://helm.sh/docs/intro/install/).
-2. Obtain access to a Kubernetes cluster.   
+2. Obtain access to an OpenShift 4.4 Kubernetes cluster.   
 3. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
