@@ -1,36 +1,38 @@
 # Docker
-Some customers may prefer to deploy EDB containers using Docker rather than using Helm, the Operator, or the native Kubernetes CLI. Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images to Docker.
+Some customers may prefer to deploy EDB containers using Docker rather than using Helm, the Operator, or the native Kubernetes CLI. Sample commands and examples are provided for deploying PostgreSQL and EDB Postgres Advanced Server container images using Docker.
  
 
 ## Prerequisites
-Complete all of the prerequisites before deploying with Docker. 
+Complete all of the prerequisite steps before deploying the images using the Docker command line. 
 
-1. Install Docker
-For Windows/macOS, installing [Docker Desktop](https://www.docker.com/products/docker-desktop) is recommended
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop) for Windows/macOS
 
-2. Verify Docker Version
-   Confirm that running Docker Engine version 1.13 or above.
+2. Verify the Docker Engine version is 1.13 or above using the following command:
    ```
    docker version
    ```
+3. Obtain credentials to access the  [quay.io](https://quay.io) container registry where EDB container images are published. 
 
-3. Login to EDB Container Registry (quay.io)
+4. Obtain access to [EDB's quay repositories](https://quay.io/organization/edb) by contacting EDB.
 
-   EDB container images are available in quay.io. The repo is currently private and requires EDB permission to access. After
-receiving access, log in to pull the desired images.
+4. After receiving access, log in to the registry to pull the desired images:
    ```
    docker login quay.io -u <your-quay.io-username> -p <your-quay.io-password>
    ```
    
-4. Download Postgres Images
+4. Use the Docker pull command to download PostgreSQL and EDB Postgres Advanced Server images from quay.io:
 
    Download PostgreSQL and EDB Postgres Advanced Server container images from quay.io
-   ```
-   docker pull quay.io/edb/postgresql-11:latest
-   docker pull quay.io/edb/postgres-advanced-server-11:latest
-   ```
+   * PostgreSQL v11
+     ```
+     docker pull quay.io/edb/postgresql-11:latest
+     ```
+   * EDB Postgres Advanced Server
+     ```
+     docker pull quay.io/edb/postgres-advanced-server-11:latest
+     ```
 
-5. Confirm downloaded image(s):
+5. To review a list of download images, run the following command:
    ```
    docker images
    ```
@@ -41,21 +43,21 @@ receiving access, log in to pull the desired images.
 The following options are provided as environment variables for Docker deployments:
 
 #### Immutable Options
-| Envrionment Variable | Required | Default              | Description               |
+| Environment Variable | Required | Default              | Description               |
 |----------------------|----------|----------------------|---------------------------|
-| PG_USER              | n/a      | enterprisedb         | Postgres user. Will always be set to enterprisedb by container image.            |
+| PG_USER              | n/a      | enterprisedb         | The name of the Postgres user. PG_USER will always be  set to `enterprisedb` by the container image.  |
 
 #### Mutable Options
 | Environment Variable | Required | Default              | Description               |
 |----------------------|----------|----------------------|---------------------------|
-| PG_PASSWORD          | Yes      | n/a                  | Postgres password. User must include value when deploying         |
-| PG_ROOT              | No       | /var/lib/edb         | Root directory of Postgres data, write ahead log, and write ahead log archive files. Override the default path by creating a docker volume and setting PG_ROOT to its path |
-| PGDATA               | No       | $PG_ROOT/data        | Postgres data directory. Override the default path by creating a docker volume and setting PGDATA to its path   |
-| PGDATA_WAL           | No       | $PG_ROOT/wal         | Postgres Write Ahead Log directory. Override the default path by creating a docker volume and setting PGDATA_WAL to its path |
-| PGDATA_ARCHIVE       | No       | $PG_ROOT/wal_archive | Postgres Write Ahead Log archive directory. Override the default path by creating a docker volume and setting PGDATA_ARCHIVE to its path |
-| PG_INITDB            | Yes      |                    | Indicates if the database directories will be initialized on startup. Should be set to `true`             |
-| CHARSET              | No       | UTF8                 | Character set. Override to another valid character set if desired             |
-| NO_REDWOOD_COMPAT    | No       | false                | Redwood mode for EPAS     |
+| PG_PASSWORD          | Yes      | n/a                  | The password of the Postgres user. PG_PASSWORD must be included during deployment.         |
+| PG_ROOT              | No       | /var/lib/edb         | The root directory of Postgres data, write ahead log, and write ahead log archive files. The value can be overridden by creating a docker volume and setting PG_ROOT to its path |
+| PGDATA               | No       | $PG_ROOT/data        | The location of the Postgres data directory. The value can be overridden by creating a docker volume and setting PGDATA to its path   |
+| PGDATA_WAL           | No       | $PG_ROOT/wal         | The location of the Postgres Write Ahead Log directory. The value can be overridden by creating a docker volume and setting PGDATA_WAL to its path |
+| PGDATA_ARCHIVE       | No       | $PG_ROOT/wal_archive | The location oof the Postgres Write Ahead Log archive directory. The value can be overridden by creating a docker volume and setting PGDATA_ARCHIVE to its path |
+| PG_INITDB            | Yes      |                    | Indicates if the database directories will be initialized on startup. Must be set to `true`             |
+| CHARSET              | No       | UTF8                 | The default character set that will be used by the database. The value can be overridden to another valid character set.             |
+| NO_REDWOOD_COMPAT    | No       | false                | Specifies that EDB Postgres Advanced Server will be installed in a mode that provides compatibility features for Oracle databases     |
 
 
 ### Deployment Examples
@@ -74,11 +76,11 @@ The following options are provided as environment variables for Docker deploymen
   ```
 * PostgreSQL with persistent volume for data (v11 shown)
         
-    i. create local data directory
+    i. Create local data directory
  
         mkdir <local-data-directory>
     
-    ii. deploy container
+    ii. Deploy a PostgreSQL container
        
         docker run --detach --name edb-postgres \
         --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v <local-data-directory>:/data \
@@ -88,7 +90,7 @@ The following options are provided as environment variables for Docker deploymen
 
 ## Verification
 
-Once the container has been deployed, run the following command to verify the status of the pods:
+After deploying a container, use the following command to verify the container status:
    ```
    docker ps
    ```
