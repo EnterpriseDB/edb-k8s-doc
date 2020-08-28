@@ -125,7 +125,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    edb=# insert into mytable1 values ('hi from epas 11');
    edb=# select * from mytable1;
    ```
-4. Check Redwood Mode (EPAS):   
+4. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
    ```
    postgres=# show db_dialect;
    ```
@@ -135,6 +135,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    redwood
    (1 row)
    ```
+   The value will be `postgres` if the database is running compatibility with PostrgreSQL database (non-redwood).
    
 ### Accessing the deployment from a client application
 
@@ -142,7 +143,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    ```
    kubectl port-forward edb-epas-v11-redwood-single <local-port>:5444 -n <your-namespace> 
    ```
-2. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step
+2. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step.
 
 ## Deleting Kubernetes Objects
 
@@ -152,7 +153,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
      helm delete postgres11-single -n <your-namespace>
      helm delete postgres11-statefulset -n <your-namespace>
      ```
-   * Advanced Server v11 with compatibility with Oracle:
+   * Advanced Server v11 with compatibility with Oracle database:
      ```
      helm delete epas11-single -n <your-namespace>
      helm delete epas11-statefulset -n <your-namespace>
@@ -165,7 +166,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
      kubectl delete pvc wal-edb-pg-v11-statefulset-0 -n <your-namespace>
      kubectl delete pvc walarchive-edb-pg-v11-statefulset-0 -n <your-namespace>
      ```
-   * Advanced Server v11 with compatibility with Oracle:
+   * Advanced Server v11 with compatibility with Oracle database:
      ```
      kubectl delete pvc data-edb-epas-v11-redwood-statefulset-0 -n <your-namespace>
      kubectl delete pvc wal-edb-epas-v11-redwood-statefulset-0 -n <your-namespace>
