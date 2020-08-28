@@ -5,9 +5,9 @@ Some customers may prefer to deploy EDB containers using Docker rather than usin
 ## Prerequisites
 Complete all of the prerequisite steps before deploying the images using the Docker command line. 
 
-1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop) for Windows/macOS
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop) for Windows/macOS.
 
-2. Verify the Docker Engine version is 1.13 or above using the following command:
+2. Verify the Docker Engine version is 1.13 or later using the following command:
    ```
    docker version
    ```
@@ -51,24 +51,24 @@ The following options are provided as environment variables for Docker deploymen
 | Environment Variable | Required | Default              | Description               |
 |----------------------|----------|----------------------|---------------------------|
 | PG_PASSWORD          | Yes      | n/a                  | The password of the Postgres user. PG_PASSWORD must be included during deployment.         |
-| PG_ROOT              | No       | /var/lib/edb         | The root directory of Postgres data, write ahead log, and write ahead log archive files. The value can be overridden by creating a docker volume and setting PG_ROOT to its path |
-| PGDATA               | No       | $PG_ROOT/data        | The location of the Postgres data directory. The value can be overridden by creating a docker volume and setting PGDATA to its path   |
-| PGDATA_WAL           | No       | $PG_ROOT/wal         | The location of the Postgres Write Ahead Log directory. The value can be overridden by creating a docker volume and setting PGDATA_WAL to its path |
-| PGDATA_ARCHIVE       | No       | $PG_ROOT/wal_archive | The location oof the Postgres Write Ahead Log archive directory. The value can be overridden by creating a docker volume and setting PGDATA_ARCHIVE to its path |
-| PG_INITDB            | Yes      |                    | Indicates if the database directories will be initialized on startup. Must be set to `true`             |
+| PG_ROOT              | No       | /var/lib/edb         | The root directory of Postgres data, write ahead log, and write ahead log archive files. The value can be overridden by creating a docker volume and setting PG_ROOT to its path. |
+| PGDATA               | No       | $PG_ROOT/data        | The location of the Postgres data directory. The value can be overridden by creating a docker volume and setting PGDATA to its path.   |
+| PGDATA_WAL           | No       | $PG_ROOT/wal         | The location of the Postgres Write Ahead Log directory. The value can be overridden by creating a docker volume and setting PGDATA_WAL to its path. |
+| PGDATA_ARCHIVE       | No       | $PG_ROOT/wal_archive | The location oof the Postgres Write Ahead Log archive directory. The value can be overridden by creating a docker volume and setting PGDATA_ARCHIVE to its path. |
+| PG_INITDB            | Yes      |                    | Indicates if the database directories will be initialized on startup. Must be set to `true`.            |
 | CHARSET              | No       | UTF8                 | The default character set that will be used by the database. The value can be overridden to another valid character set.             |
-| NO_REDWOOD_COMPAT    | No       | false                | Specifies that EDB Postgres Advanced Server will be installed in a mode that provides compatibility features for Oracle databases     |
+| NO_REDWOOD_COMPAT    | No       | false                | Specifies that EDB Postgres Advanced Server will be installed in a mode that provides compatibility features for Oracle databases.     |
 
 
 ### Deployment Examples
 
-* EDB Postgres Advanced Server with defaults (redwood on) 
+* EDB Postgres Advanced Server with defaults and compatibility with Oracle database (redwood on) 
   ```
   docker run --detach --name edb-postgres \
   --env PG_PASSWORD=mypassword --env PG_INITDB=true \
   quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
   ```
-* EDB Postgres Advanced Server with redwood mode off (v11 shown)
+* EDB Postgres Advanced Server with defaults and compatibility with PostgreSQL database (redwood mode off)
   ```  
   docker run --detach --name edb-postgres \
   --env PG_PASSWORD=mypassword --env PG_INITDB=true --env NO_REDWOOD_COMPAT=true \
@@ -114,7 +114,7 @@ After verifying successful deployment, the PostgreSQL or EDB Postgres Advanced S
    postgres=# insert into mytable1 values ('hi from pg 11');
    postgres=# select * from mytable1;
    ```
-4. Check Redwood Mode (EPAS):   
+4. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
    ```
    postgres=# show db_dialect;
    ```
@@ -124,3 +124,4 @@ After verifying successful deployment, the PostgreSQL or EDB Postgres Advanced S
    redwood
    (1 row)
    ```
+   The value will be `postgres` if the database is running with compatibility with PostrgreSQL database (non-redwood).
