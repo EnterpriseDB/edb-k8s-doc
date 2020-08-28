@@ -114,4 +114,4 @@ spec:
         - name: config-volume
           configMap:
             # Name of configmap where a custom_postgresql.conf will be provided that will include any overrides to default postgresql.conf values
-            name: edb-db-custom-config
+            name: edb-cli-db-custom-config

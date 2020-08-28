@@ -77,7 +77,7 @@ spec:
   volumes:
     - name: config-volume
       configMap:
-        name: edb-db-custom-config
+        name: edb-cli-db-custom-config
 
 
 
