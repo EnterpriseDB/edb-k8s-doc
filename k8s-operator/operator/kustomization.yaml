@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- service_account.yaml
+- role.yaml
+- role_binding.yaml
+- operator.yaml
+- pull-secret.yaml
+
+secretGenerator:
+- name: edb-pg-as11-secret
+  literals:
+  - USING_SECRET='true'
+  - PG_USER='enterprisedb'
+  - PG_PASSWORD='edb'
+  - PG_REPLICATION_USER='replication'
+  - PG_REPLICATION_PASSWORD='replication'
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+commonLabels:
+  developer: edb
+  app: edb-operator
+  

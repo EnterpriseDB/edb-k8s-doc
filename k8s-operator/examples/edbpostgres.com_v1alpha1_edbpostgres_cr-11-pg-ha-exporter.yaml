@@ -1,0 +1,40 @@
+apiVersion: edbpostgres.com/v1alpha1
+kind: EDBPostgres
+metadata:
+  name: edb-pg-11-ha
+spec:
+  # ---------------------------------
+  # IMPORTANT: In this CR you will find an example of all options and possible configurations.
+  # However, by default values are applied by the operator if values are not specified below.
+  # ---------------------------------
+
+  # ---------------------------------
+  # ## Default Setup
+  # ---------------------------------
+
+  clusterSize: 2
+  databaseMemoryLimit: "2Gi"
+  databaseMemoryRequest: "1Gi"
+  databaseCPULimit: "100m"
+  databaseCPU: "50m"
+  databaseStorageRequest: "5Gi"
+  databaseStorageClass: "standard"
+  databasePort: 5432
+  serviceAccount: "edb-operator"
+  containerImagePullPolicy: Always
+  highAvailability:
+    enable: true
+    image:  "quay.io/edb/stolon:v1-ubi7-amd64"
+    podDebug: "false"
+  image: "quay.io/edb/postgresql-11:ubi7-amd64"
+  secretName: "edb-pg-as11-secret"
+  postgresType: "PG"
+  postgresVersion: 11
+  pgExporter:
+    enable: true
+    image: quay.io/edb/pgxexporter:v1-ubi7-amd64
+    command: ["/usr/local/bin/pgx_exporter"]
+    args: ["--enableHAMetrics=true","--log.level=debug"]
+    secretName: edb-exporter-secret
+    extendedQueryConfigMap: edb-monitoring-stats
+    imagePullPolicy: Always
