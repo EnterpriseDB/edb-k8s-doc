@@ -13,6 +13,6 @@ username: John_Doe
 **If user has no Quay.io account provide email**
 Email: Joe.Doe@somecompany.com
 
-** Client info **
+** Fill out client info **
 Name: John Doe 
 Company: Enterprise Widgets
