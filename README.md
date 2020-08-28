@@ -15,14 +15,19 @@ Common use cases supported include:
 * Oracle migration feasibility assessments
 * 99.9% available production environments
 
+
 ## Getting Started
 
-EDB container images can be deployed using: 
+3. Obtain credentials to access the  [quay.io](https://quay.io) container registry where EDB container images are published. 
 
-* [Docker](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/Docker)
+4. Obtain access to [EDB's quay repositories](https://quay.io/organization/edb) by contacting [EDB](https://github.com/EnterpriseDB/edb-k8s-doc/issues/new?assignees=&labels=&template=quay-io-request-access.md&title=).
 
-* [Helm Charts](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-helm)
+3. Deploy EDB container images using: 
 
-* [Command Line Interface (CLI)](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-CLI)
+   * [Docker](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/Docker)
 
-* [Kubernetes Operator](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-operator)
+   * [Helm Charts](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-helm)
+
+   * [Command Line Interface (CLI)](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-CLI)
+
+   * [Kubernetes Operator](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-operator)
