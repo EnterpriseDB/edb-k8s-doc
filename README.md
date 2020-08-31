@@ -13,7 +13,7 @@ Common use cases supported include:
 * Experimental developer sandboxes
 * Integration with CI/CD pipelines
 * Oracle migration feasibility assessments
-* 99.9% available production environments
+* 99.9% available production environments (coming soon)
 
 
 ## Getting Started
