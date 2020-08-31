@@ -7,32 +7,30 @@ Complete all of the prerequisite steps before deploying the images using the Doc
 
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop) for Windows/macOS.
 
-2. Verify the Docker Engine version is 1.13 or later using the following command:
+1. Verify the Docker Engine version is 1.13 or later using the following command:
    ```
    docker version
    ```
-3. Obtain credentials to access the  [quay.io](https://quay.io) container registry where EDB container images are published. 
 
-4. Obtain access to [EDB's quay repositories](https://quay.io/organization/edb) by contacting EDB.
-
-4. After receiving access, log in to the registry to pull the desired images:
+1. Log in to the quay.io registry to pull the desired images:
    ```
    docker login quay.io -u <your-quay.io-username> -p <your-quay.io-password>
    ```
+   Note: Please see the main readme for getting access to quay.io and EDB's image repositories.
    
-4. Use the Docker pull command to download PostgreSQL and EDB Postgres Advanced Server images from quay.io:
+1. Use the Docker pull command to download PostgreSQL and EDB Postgres Advanced Server images from quay.io:
 
    Download PostgreSQL and EDB Postgres Advanced Server container images from quay.io
    * PostgreSQL v11
      ```
      docker pull quay.io/edb/postgresql-11:latest
      ```
-   * EDB Postgres Advanced Server
+   * EDB Postgres Advanced Server v11
      ```
      docker pull quay.io/edb/postgres-advanced-server-11:latest
      ```
 
-5. To review a list of download images, run the following command:
+1. To review a list of downloaded images, run the following command:
    ```
    docker images
    ```
@@ -55,9 +53,9 @@ The following options are provided as environment variables for Docker deploymen
 | PGDATA               | No       | $PG_ROOT/data        | The location of the Postgres data directory. The value can be overridden by creating a docker volume and setting PGDATA to its path.   |
 | PGDATA_WAL           | No       | $PG_ROOT/wal         | The location of the Postgres Write Ahead Log directory. The value can be overridden by creating a docker volume and setting PGDATA_WAL to its path. |
 | PGDATA_ARCHIVE       | No       | $PG_ROOT/wal_archive | The location oof the Postgres Write Ahead Log archive directory. The value can be overridden by creating a docker volume and setting PGDATA_ARCHIVE to its path. |
-| PG_INITDB            | Yes      |                    | Indicates if the database directories will be initialized on startup. Must be set to `true`.            |
+| PG_INITDB            | Yes      |                    | Indicates if the database directories should be initialized on startup. Must be set to `true`, unless deploying a PostgreSQL container with persistent storage already initialized.      |
 | CHARSET              | No       | UTF8                 | The default character set that will be used by the database. The value can be overridden to another valid character set.             |
-| NO_REDWOOD_COMPAT    | No       | false                | Specifies that EDB Postgres Advanced Server will be installed in a mode that provides compatibility features for Oracle databases.     |
+| NO_REDWOOD_COMPAT    | No       | false                | Specifies if EDB Postgres Advanced Server will be installed in a mode that does not provide compatibility features for Oracle databases.  Compatibility with Oracle will be provided by default.  Must be overridden to `true` if compatability with Oracle is not needed.   |
 
 
 ### Deployment Examples
@@ -103,18 +101,18 @@ After verifying successful deployment, the PostgreSQL or EDB Postgres Advanced S
    ```
    docker exec -it edb-postgres bash
    ```
-2. Log into the database (default user):
+1. Log into the database (default user):
    ```
    $PGBIN/psql -d postgres -U enterprisedb
    ```
-3. Run sample queries:
+1. Run sample queries:
    ```
    postgres=# select version();
    postgres=# create table mytable1(var1 text);
    postgres=# insert into mytable1 values ('hi from pg 11');
    postgres=# select * from mytable1;
    ```
-4. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
+1. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
    ```
    postgres=# show db_dialect;
    ```
