@@ -4,12 +4,12 @@
 
 The EDB Operator (edb-operator) simplifies database administrator tasks for deploying and managing PostgreSQL and EDB Postgres Advanced Server clusters on Kubernetes. The EDB Operator incorporates domain expertise and years of practical experience for maintaining and configuring Postgres database clusters. 
 
-The EDB Operator provides:
-* deployment with or without Streaming Replication
+The EDB Operator can:
+* deploy with or without streaming replication
 * failover to a standby database node while ensuring a minimum number of defined nodes
-* control of configuration parameters
-* adjustment of compute resources automatically
-* assignment of metadata tags to the cluster
+* control configuration parameters
+* adjust compute resources automatically
+* assign metadata tags to a cluster
 
 In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server cluster is provided to the EDB Operator and in turn, the operator provisions compute resources and the database pods while continuously ensuring the cluster runs with the provided specification.
 
@@ -31,32 +31,46 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
 * OpenShift Container Platform 4.4
 
 ## Prerequisites
-1. Get your kubectl verison by running `kubectl version --short | grep Client`
-1. Setup your image-pull-secret by editing and running the following command for your `kubectl` version
+1. Obtain access to a Kubernetes cluster.
+2. Determine the kubectl client verison by running the following command:
+   ```
+   kubectl version --short | grep Client
+   ```
+3. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
+   ```
+   kubectl create ns <your-namespace>
+   ```
+4. Setup your image-pull-secret by editing and running the following command based on the `kubectl` client version:
 
-  * for `kubectl` version <1.18.0
-```
-kubectl create secret docker-registry --dry-run=true edb-operator-pull-secret \
---docker-server=<DOCKER_REGISTRY_SERVER> \
---docker-username=<DOCKER_USER> \
---docker-password=<DOCKER_PASSWORD> \
---docker-email=<DOCKER_EMAIL> -o yaml > operator/pull-secret.yaml
-```
-   * for `kubectl` version >1.18.0
-```
-kubectl create secret docker-registry --dry-run=client edb-operator-pull-secret \
---docker-server=<DOCKER_REGISTRY_SERVER> \
---docker-username=<DOCKER_USER> \
---docker-password=<DOCKER_PASSWORD> \
---docker-email=<DOCKER_EMAIL> -o yaml > operator/pull-secret.yaml
-```
-3. Modify your database login as preferred by editing the literal values in `/operator/kustomization.yaml`
-3. Deploy the CRD first by running the following command:
-    `kubectl apply -k operator/crds/.`
-3. Deploy the Operator by running the following command:
-   `kubectl apply -k .`
-3. (For OpenShift), add a Security Context Constraint (SCC) to run containers as root or specified UID using the following command:
-   `oc adm policy add-scc-to-user edb-operator-scc -z edb-operator`
+   * version 1.17.x or earlier
+     ```
+     kubectl create secret docker-registry --dry-run=true edb-operator-pull-secret \
+     --docker-server=<DOCKER_REGISTRY_SERVER> \
+     --docker-username=<DOCKER_USER> \
+     --docker-password=<DOCKER_PASSWORD> \
+     --docker-email=<DOCKER_EMAIL> -n <your-namespace> -o yaml > operator/pull-secret.yaml
+     ```
+   * version 1.18.x or later
+     ```
+     kubectl create secret docker-registry --dry-run=client edb-operator-pull-secret \
+     --docker-server=<DOCKER_REGISTRY_SERVER> \
+     --docker-username=<DOCKER_USER> \
+     --docker-password=<DOCKER_PASSWORD> \
+     --docker-email=<DOCKER_EMAIL> -n <your-namespace> -o yaml > operator/pull-secret.yaml
+     ```  
+5. Modify the database login credentials by editing the literal values in `operator/kustomization.yaml`
+6. Deploy the CRD by running the following command:
+   ```
+   kubectl apply -k operator/crds/.
+   ```
+7. Deploy the Operator by running the following command:
+   ```
+   kubectl apply -k . -n <your-namespace>
+   ```
+8. (For OpenShift), add a Security Context Constraint (SCC) to run containers as root or specified UID using the following command:
+   ```
+   oc adm policy add-scc-to-user edb-operator-scc -z edb-operator
+   ```
 
 ## Design Overview
 
@@ -109,67 +123,66 @@ Storing the state in a configmap, gives the operator the ability to change the s
 
    * PostgreSQL 
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-no-ha.yaml
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-no-ha.yaml -n <your-namespace>
      ```  
      
    * EDB Postgres Advanced Server (EPAS)  
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-epas-no-ha.yaml
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-epas-no-ha.yaml -n <your-namespace>
      ```
 
 ### Deploying high availability PostgreSQL cluster (multiple instances)
 
    * PostgreSQL
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-ha.yaml
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-ha.yaml -n <your-namespace>
      ```
      
    * EDB Postgres Advanced Server (EPAS)  
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-epas-ha.yaml
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-epas-ha.yaml -n <your-namespace>
      ```
 
 ## Verification
 
 After deploying with the EDB Operator, run the following command to verify the status of the pods:
 ```
-$ kubectl get deploy
+$ kubectl get deploy -n <your-namespace>
 ```
 If the deployment is successful, the output of the command for an HA specification of EDB Postgres Advanced Server v11 will show the number of cluster-aware proxies (edb-epas-11-proxy) and sentinels (edb-epas-11-sentinel) matching the clusterSize requested:
 
 ```
-NAME               	 READY  UP-TO-DATE   AVAILABLE   AGE
-edb-epas-11-proxy  	 5/5 	  5        	   5           4d19h
-edb-epas-11-sentinel 5/5 	  5        	   5           4d19h
-edb-operator       	 2/2 	  2            2           4d19h
+NAME                  READY  UP-TO-DATE   AVAILABLE   AGE
+edb-epas-11-proxy     5/5    5            5           4d19h
+edb-epas-11-sentinel  5/5    5            5           4d19h
+edb-operator          2/2    2            2           4d19h
 ```
  
 In addtion after the deployment, run the following command to verify the status of the pods in the cluster:
 ```
-$ kubectl get pod
+$ kubectl get pod -n <your-namespace>
 ```
 If the deployment is successful, the output of the command for an HA specification of EDB Postgres Advanced Server v11 will show all pods ready and a status of Available status as follows:
 ```
-NAME                                	    READY   STATUS RESTARTS   AGE
-edb-epas-11-0                       	    1/1 	   Running   0       5d21h
-edb-epas-11-1                       	    1/1 	   Running   0       5d21h
-edb-epas-11-2                       	    1/1 	   Running   0      	5d21h
-edb-epas-11-3                       	    1/1 	   Running   0      	5d21h
-edb-epas-11-4                       	    1/1 	   Running   0  	    5d21h
-edb-epas-11-proxy-858f6bb967-bm97j  	    1/1 	   Running   0      	5d21h
-edb-epas-11-proxy-858f6bb967-j6q7v  	    1/1 	   Running   0      	5d21h
-edb-epas-11-proxy-858f6bb967-ntnfh  	    1/1 	   Running   0      	5d21h
-edb-epas-11-proxy-858f6bb967-t6tp9  	    1/1 	   Running   0      	5d21h
-edb-epas-11-proxy-858f6bb967-zk29s  	    1/1 	   Running   0      	5d21h
-edb-epas-11-sentinel-54fff448c5-dl9bc    1/1 	   Running   0      	5d21h
-edb-epas-11-sentinel-54fff448c5-mwh2d    1/1 	   Running   0      	5d21h
-edb-epas-11-sentinel-54fff448c5-nn4fx    1/1 	   Running   0      	5d21h
-edb-epas-11-sentinel-54fff448c5-pdhn8    1/1 	   Running   0      	5d21h
-edb-epas-11-sentinel-54fff448c5-tll29    1/1 	   Running   0      	5d21h
-edb-operator-6b4d4494c9-hwpr5       	    1/1 	   Running   0      	5d21h
-edb-operator-6b4d4494c9-xwkfp       	    1/1 	   Running   0      	5d21h
+NAME                                      READY    STATUS    RESTARTS  AGE
+edb-epas-11-0                             1/1 	   Running   0         5d21h
+edb-epas-11-1                             1/1 	   Running   0         5d21h
+edb-epas-11-2                             1/1 	   Running   0         5d21h
+edb-epas-11-3                             1/1 	   Running   0         5d21h
+edb-epas-11-4                             1/1 	   Running   0         5d21h
+edb-epas-11-proxy-858f6bb967-bm97j        1/1 	   Running   0         5d21h
+edb-epas-11-proxy-858f6bb967-j6q7v        1/1 	   Running   0         5d21h
+edb-epas-11-proxy-858f6bb967-ntnfh        1/1 	   Running   0         5d21h
+edb-epas-11-proxy-858f6bb967-t6tp9        1/1 	   Running   0         5d21h
+edb-epas-11-proxy-858f6bb967-zk29s        1/1 	   Running   0         5d21h
+edb-epas-11-sentinel-54fff448c5-dl9bc     1/1 	   Running   0         5d21h
+edb-epas-11-sentinel-54fff448c5-mwh2d     1/1 	   Running   0         5d21h
+edb-epas-11-sentinel-54fff448c5-nn4fx     1/1 	   Running   0         5d21h
+edb-epas-11-sentinel-54fff448c5-pdhn8     1/1 	   Running   0         5d21h
+edb-epas-11-sentinel-54fff448c5-tll29     1/1 	   Running   0         5d21h
+edb-operator-6b4d4494c9-hwpr5             1/1 	   Running   0         5d21h
+edb-operator-6b4d4494c9-xwkfp             1/1 	   Running   0         5d21h
 ```
-
 
 ## Configuration
 
@@ -210,7 +223,7 @@ To modify PostgreSQL parameter values, update 'primaryConfig' in the specificati
 
 Apply the updated specification to Kubernetes and the operator will ensure parameter changes are made on each node if they do not require a restart: 
 ```
-kubectl apply -f /examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-customlabels.yaml
+kubectl apply -f /examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-customlabels.yaml -n <your-namespace>
 ```
 
 **Note:** The following parameters, if defined in the cluster specification, will be ignored since they are managed by stolon and cannot be defined by the user:
@@ -246,7 +259,7 @@ _All steps assume user has access to the Openshift GUI and kubectl in the termin
 *   Run `show db_dialect`
 *   For redwood mode, the output should be “redwood”, otherwise it should be “postgres”
 
-#### (For HA deployment) check whether a database is Primary or Standby:
+### (For HA deployment) check whether a database is Primary or Standby:
 
 *   Enter the desired pods logs
 *   If the pod is Primary, the logs will indicate every cycle that it is Primary
@@ -254,7 +267,7 @@ _All steps assume user has access to the Openshift GUI and kubectl in the termin
 ### Change the number of databases in a deployment 
 
 *   Edit the YAML to adjust the clusterSize setting to the desired number using the command line in the directory where the deployment’s YAML is located 
-*   Run `kubectl apply -f <name_of_yaml_file>`
+*   Run `kubectl apply -f <name_of_yaml_file> -n <your-namespace>`
 
 ### Verify failover from Primary in a High Availability deployment 
 
@@ -265,18 +278,18 @@ _All steps assume user has access to the Openshift GUI and kubectl in the termin
 
 ## Deleting Kubernetes Objects
 
-### Remove a database deployment from your cluster 
+### Delete a database deployment from a namespace 
 
-*   From the command line in the directory containing the deployment’s yaml is located: `kubectl delete -f <name_of_yaml_file>`
-*   After all of the deployment’s pods have been terminated, remove the associated PVCs for each pod that have the same name
+*   From the command line (in the directory containing the deployment’s yaml), run: `kubectl delete -f <name_of_yaml_file> -n <your-namespace>`
+*   After all pods for the deployment have been terminated, remove the associated PVCs for each pod that have the same name
 
-### Delete the operator from your namespace 
+### Delete the operator from a namespace (infrequent)
 
-*   From the command line, run `examples/kubectl delete -k .`
-*   After all pods have been terminated, remove the associated PVCs by running `kubectl delete pvc -l owner=edb-operator`
+*   From the command line, run `kubectl delete -k . -n <your-namespace>`
+*   After all pods have been terminated, remove the associated PVCs by running `kubectl delete pvc -l owner=edb-operator -n <your-namespace>`
 
-### Delete the operator from your cluster 
+### Delete the custom resource definition (CRD) and operator from a cluster (rare) 
 
-*   From the command line, run `examples/kubectl delete -k operator/crds/.`
-*   From the command line, run `examples/kubectl delete -k .`
-*   After all pods have been terminated, remove the associated PVCs by running `kubectl delete pvc -l owner=edb-operator`
+*   From the command line, run `kubectl delete -k operator/crds/.`
+*   From the command line, run `kubectl delete -k . -n <your-namespace>`
+*   After all pods have been terminated, remove the associated PVCs by running `kubectl delete pvc -l owner=edb-operator -n <your-namespace>`
