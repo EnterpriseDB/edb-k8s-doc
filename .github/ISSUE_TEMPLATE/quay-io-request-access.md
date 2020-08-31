@@ -3,7 +3,7 @@ name: quay.io request access
 about: Getting  Quay.Io Registry access for EDB
 title: ''
 labels: ''
-assignees: ''
+assignees: dmnemec, theadamwright, kelpoole, taylorgrahamedb
 
 ---
 
