@@ -6,7 +6,7 @@ kind: Kustomization
 # located in the 'operator' directory.
 
 resources:
-- storage-class-aws-ebs.yaml
+#- storage-class-aws-ebs.yaml
 
 bases:
 - operator/

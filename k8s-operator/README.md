@@ -32,15 +32,16 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
 
 ## Prerequisites
 1. Obtain access to a Kubernetes cluster.
-2. Determine the kubectl client verison by running the following command:
-   ```
-   kubectl version --short | grep Client
-   ```
-3. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
+
+2. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
    ```
-4. Setup your image-pull-secret by editing and running the following command based on the `kubectl` client version:
+3. Determine the kubectl **client** version by running the following command:
+   ```
+   kubectl version --short | grep Client
+   ```
+4. Setup your image-pull-secret by editing and running the following command based on the `kubectl` **client** version:
 
    * version 1.17.x or earlier
      ```
@@ -67,9 +68,9 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
    ```
    kubectl apply -k . -n <your-namespace>
    ```
-8. (For OpenShift), add a Security Context Constraint (SCC) to run containers as root or specified UID using the following command:
+8. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-operator` service account by using the following command:
    ```
-   oc adm policy add-scc-to-user edb-operator-scc -z edb-operator
+   oc adm policy add-scc-to-user edb-scc -z edb-operator
    ```
 
 ## Design Overview

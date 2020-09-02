@@ -5,4 +5,3 @@ resources:
 - edbpostgres.com_backups_crd.yaml
 - edbpostgres.com_edbpostgres_crd.yaml
 - edbpostgres.com_taskrunners_crd.yaml
-- scc.yaml

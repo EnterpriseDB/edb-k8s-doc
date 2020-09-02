@@ -18,7 +18,9 @@ spec:
   databaseCPULimit: "1000m"
   databaseCPU: "50m"
   databaseStorageRequest: "5Gi"
-  databaseStorageClass: "standard"
+  databaseStorageClass: "edb-storageclass"
+  databaseArchiveStorageClass: "edb-storageclass"
+  databaseWalStorageClass: "edb-storageclass"
   databasePort: 5444
   serviceAccount: "edb-operator"
   containerImagePullPolicy: Always
