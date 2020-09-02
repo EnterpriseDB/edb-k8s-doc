@@ -24,9 +24,9 @@ Common use cases supported include:
 
 1. (For OpenShift) Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for two of the most common public cloud platforms:
 
-   * AWS EBS `kubectl apply -f storage-class-aws-ebs.yaml`
+   * AWS EBS `kubectl apply -f setup/storage-class-aws-ebs.yaml`
 
-   * GCE Persistent Disk `kubectl apply -f storage-class-gce-pd.yaml`
+   * GCE Persistent Disk `kubectl apply -f setup/storage-class-gce-pd.yaml`
 
    For additional examples, refer to the [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) documentation provided by Kubernetes.
    
