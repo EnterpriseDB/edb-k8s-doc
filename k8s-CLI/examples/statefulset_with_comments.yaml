@@ -142,7 +142,7 @@ spec:
         name: data
       spec:
         # Type of storage that the storage class should provide.
-        storageClassName: standard
+        storageClassName: edb-storageclass
         accessModes:
           - ReadWriteOnce
         resources:
@@ -152,7 +152,7 @@ spec:
     - metadata:
         name: wal
       spec:
-        storageClassName: standard
+        storageClassName: edb-storageclass
         accessModes:
           - ReadWriteOnce
         resources:
@@ -163,7 +163,7 @@ spec:
         name: walarchive
       spec:
         # Type of storage that the storage class should provide.
-        storageClassName: standard
+        storageClassName: edb-storageclass
         accessModes:
           - ReadWriteOnce
         resources:

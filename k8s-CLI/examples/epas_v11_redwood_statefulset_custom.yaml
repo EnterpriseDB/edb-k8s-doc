@@ -98,7 +98,7 @@ spec:
     - metadata:
         name: data
       spec:
-        storageClassName: standard
+        storageClassName: edb-storageclass
         accessModes:
           - ReadWriteOnce
         resources:
@@ -107,7 +107,7 @@ spec:
     - metadata:
         name: wal
       spec:
-        storageClassName: standard
+        storageClassName: edb-storageclass
         accessModes:
           - ReadWriteOnce
         resources:
@@ -116,7 +116,7 @@ spec:
     - metadata:
         name: walarchive
       spec:
-        storageClassName: standard
+        storageClassName: edb-storageclass
         accessModes:
           - ReadWriteOnce
         resources:
