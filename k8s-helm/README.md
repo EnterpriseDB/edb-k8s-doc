@@ -5,13 +5,13 @@ Some customers may prefer to deploy EDB containers using Helm rather than using 
 
 Complete all of the prerequisites before using the Helm charts. The prerequisites are provided in the sample files. You can modify the sample files as required by your deployment. 
 1. Install [Helm 3](https://helm.sh/docs/intro/install/).
-2. Obtain access to an OpenShift 4.4 Kubernetes cluster.   
-3. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
+1. Obtain access to an OpenShift 4.4 Kubernetes cluster.   
+1. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
    ```
    For more information, refer to the [Creating a Namespace](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace) documentation provided by k8s.io.
-4. Create a secret for pulling images from quay.io in the namespace; the secret will be used when deploying container images:
+1. Create a secret for pulling images from quay.io in the namespace; the secret will be used when deploying container images:
    ```
    kubectl create secret docker-registry <regcred> --docker-server=<your-registry-server> \
    --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email> \
@@ -24,22 +24,19 @@ Complete all of the prerequisites before using the Helm charts. The prerequisite
    * `<your-pword>` is your quay.io password  
    * `<your-email>` is your email address as used to retrieve the quay.io credentials
    For more information, refer to [Creating a Secret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-by-providing-credentials-on-the-command-line) documentation provided by k8s.io.
-5. Create a service account in the namespace to run the pods securely using the following command:
+1. Create the `edb-helm` service account in the namespace to run the pods securely using the following command:
    ```
    kubectl apply -f setup/service-account.yaml -n <your-namespace> 
    ```
-6. (For StatefulSet examples), create a configmap to override the default postgres.conf settings in the namespace.  The example configmap is only showcasing the functionality in StatefulSet examples provided; however, a custom postgres.conf can be provided for single pod or StatefulSet deployments if desired. 
+1. (For StatefulSet examples), create a configmap to override the default postgres.conf settings in the namespace.  The example configmap is only showcasing the functionality in StatefulSet examples provided; however, a custom postgres.conf can be provided for single pod or StatefulSet deployments if desired. 
    ```
    kubectl apply -f setup/configmap.yaml -n <your-namespace> 
    ``` 
-7. (For OpenShift), the appropriate privileges and security context constraints (SCC) must be created and assigned to the service account by using the following commands:
+1. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-helm` service account by using the following command:
    ```
-   kubectl apply -f setup/scc.yaml
-   oc adm policy add-scc-to-user edb-helm-scc -z edb-helm 
+   oc adm policy add-scc-to-user edb-scc -z edb-helm 
    ```
-   The sample SCC provided includes the required permissions for successful deployment to OpenShift 4.4. It assumes the `edb-helm` service account is being used.  Change the commands and file if a different service account will be used.
-   
-   For more information on SCC, refer to Openshift documentation. 
+
  
 ## Deploying with Helm
 
@@ -114,18 +111,18 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
      ```
      kubectl exec -it edb-epas-v11-redwood-statefulset -n <your-namespace> -- bash
      ```
-2. Log into the database:
+1. Log into the database:
    ```
    $PGBIN/psql -d postgres -U enterprisedb
    ```
-3. Run sample queries:
+1. Run sample queries:
    ```
    edb=# select version();
    edb=# create table mytable1(var1 text);
    edb=# insert into mytable1 values ('hi from epas 11');
    edb=# select * from mytable1;
    ```
-4. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
+1. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
    ```
    postgres=# show db_dialect;
    ```
@@ -143,7 +140,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    ```
    kubectl port-forward edb-epas-v11-redwood-single <local-port>:5444 -n <your-namespace> 
    ```
-2. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step.
+1. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step.
 
 ## Deleting Kubernetes Objects
 
@@ -159,7 +156,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
      helm delete epas11-statefulset -n <your-namespace>
      ```
      
-2. The following commands delete any PVC's created with StatefulSet deployments:
+1. The following commands delete any PVC's created with StatefulSet deployments:
    * PostgreSQL v11: 
      ```
      kubectl delete pvc data-edb-pg-v11-statefulset-0 -n <your-namespace>
@@ -173,7 +170,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
      kubectl delete pvc walarchive-edb-epas-v11-redwood-statefulset-0 -n <your-namespace>
      ```
 
-3. If the same namespace will be used again for deployments, skip this step. Otherwise, the following commands delete installed prerequisites: 
+1. If the same namespace will be used again for deployments, skip this step. Otherwise, the following commands delete installed prerequisites: 
    ```
    kubectl delete secret quay-regsecret -n <your-namespace>
    kubectl delete -f setup/service-account.yaml -n <your-namespace> 

@@ -22,6 +22,11 @@ config:
   noRedwoodCompat: false
   customConfigmap: "edb-helm-db-custom-config"
 
+persistence:
+  accessModes:
+  - ReadWriteOnce
+  storageClass: "edb-storageclass"
+
 resources:
   limits:
     cpu: 2

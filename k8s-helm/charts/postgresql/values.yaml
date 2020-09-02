@@ -68,7 +68,7 @@ persistence:
   # Type of storage that the storage class should provide.
   accessModes:
   - ReadWriteOnce
-  storageClass: "standard"
+  storageClass: "edb-storageclass"
 
 # See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits for more info.
 # 1000m = 1 uniCore for an EDB subscription

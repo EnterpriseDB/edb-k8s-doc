@@ -120,6 +120,7 @@ spec:
     - metadata:
         name: data
       spec:
+        storageClassName: {{ .Values.persistence.storageClass }}
         accessModes:
           {{- range .Values.persistence.accessModes }}
           - {{ . }}
@@ -130,6 +131,7 @@ spec:
     - metadata:
         name: wal
       spec:
+        storageClassName: {{ .Values.persistence.storageClass }}
         accessModes:
           {{- range .Values.persistence.accessModes }}
           - {{ . }}
@@ -140,6 +142,7 @@ spec:
     - metadata:
         name: walarchive
       spec:
+        storageClassName: {{ .Values.persistence.storageClass }}
         accessModes:
           {{- range .Values.persistence.accessModes }}
           - {{ . }}
