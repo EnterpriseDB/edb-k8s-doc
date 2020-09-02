@@ -22,12 +22,30 @@ Common use cases supported include:
 
 1. Obtain access to [EDB's quay repositories](https://quay.io/organization/edb) by contacting [EDB](https://github.com/EnterpriseDB/edb-k8s-doc/issues/new?assignees=&labels=&template=quay-io-request-access.md&title=).
 
-1. Deploy EDB container images using: 
+### Docker
 
-   * [Docker](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/Docker)
+1. Deploy EDB container images using:
+
+   * [Command Line Interface (CLI)](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/Docker)
+   * Docker Compose
+
+### Kubernetes
+
+1. (For OpenShift) Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for two of the most common public cloud platforms:
+
+   * AWS EBS `kubectl apply -f storage-class-aws-ebs.yaml`
+
+   * GCE Persistent Disk `kubectl apply -f storage-class-gce-pd.yaml`
+
+   For additional examples, refer to the [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) documentation provided by Kubernetes.
+   
+1. (For OpenShift) Create a Security Context Constraint (SCC) which includes the required permissions for successful deployment to OpenShift 4.4 or later by using the following command:
+   ```
+   kubectl apply -f setup/scc.yaml
+   ```
+   
+1. Deploy EDB container images using:
 
    * [Helm Charts](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-helm)
-
    * [Command Line Interface (CLI)](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-CLI)
-
-   * [Kubernetes Operator](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-operator)
+   * [Operator](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-operator)
