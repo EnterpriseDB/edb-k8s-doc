@@ -33,15 +33,15 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
 ## Prerequisites
 1. Obtain access to a Kubernetes cluster.
 
-2. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
+1. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
    ```
-3. Determine the kubectl **client** version by running the following command:
+1. Determine the kubectl **client** version by running the following command:
    ```
    kubectl version --short | grep Client
    ```
-4. Setup your image-pull-secret by editing and running the following command based on the `kubectl` **client** version:
+1. Create an image-pull-secret by editing and running the following command based on the `kubectl` **client** version:
 
    * version 1.17.x or earlier
      ```
@@ -59,16 +59,17 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
      --docker-password=<DOCKER_PASSWORD> \
      --docker-email=<DOCKER_EMAIL> -n <your-namespace> -o yaml > operator/pull-secret.yaml
      ```  
-5. Modify the database login credentials by editing the literal values in `operator/kustomization.yaml`
-6. Deploy the CRD by running the following command:
+   For more information on why and how to use secrets, refer to [Secret](https://kubernetes.io/docs/concepts/configuration/secret/) documentation provided by Kubernetes.
+1. Modify the database login credentials by editing the literal values in `operator/kustomization.yaml`
+1. Deploy the CRD by running the following command:
    ```
    kubectl apply -k operator/crds/.
    ```
-7. Deploy the Operator by running the following command:
+1. Deploy the Operator by running the following command:
    ```
    kubectl apply -k . -n <your-namespace>
    ```
-8. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-operator` service account by using the following command:
+1. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-operator` service account by using the following command:
    ```
    oc adm policy add-scc-to-user edb-scc -z edb-operator
    ```
