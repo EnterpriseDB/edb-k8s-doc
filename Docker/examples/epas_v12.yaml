@@ -1,0 +1,9 @@
+version: '3'
+services:
+  edb-postgres:
+    command: bash -c '/police.sh && /launch.sh'
+    image: quay.io/edb/postgres-advanced-server-12:latest
+    container_name: edb-postgres
+    environment:
+      - PG_INITDB=true
+      - PG_PASSWORD=mypassword

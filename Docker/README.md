@@ -12,22 +12,20 @@ Complete all of the prerequisite steps before deploying the images using the Doc
    docker version
    ```
 
-1. Log in to the quay.io registry to pull the desired images:
+1. Confirm [access](github.com/EnterpriseDB/edb-k8s-doc/README.md) to quay.io and EDB's repositories by logging in to the quay.io registry to view the desired images: 
    ```
    docker login quay.io -u <your-quay.io-username> -p <your-quay.io-password>
    ```
-   Note: Please see the main readme for getting access to quay.io and EDB's image repositories.
    
 1. Use the Docker pull command to download PostgreSQL and EDB Postgres Advanced Server images from quay.io:
 
-   Download PostgreSQL and EDB Postgres Advanced Server container images from quay.io
-   * PostgreSQL v11
+   * PostgreSQL v12
      ```
-     docker pull quay.io/edb/postgresql-11:latest
+     docker pull quay.io/edb/postgresql-12:latest
      ```
-   * EDB Postgres Advanced Server v11
+   * EDB Postgres Advanced Server v12
      ```
-     docker pull quay.io/edb/postgres-advanced-server-11:latest
+     docker pull quay.io/edb/postgres-advanced-server-12:latest
      ```
 
 1. To review a list of downloaded images, run the following command:
@@ -35,9 +33,7 @@ Complete all of the prerequisite steps before deploying the images using the Doc
    docker images
    ```
 
-## Deploying with Docker
-
-### Environment Variables
+## Environment Variables
 The following options are provided as environment variables for Docker deployments:
 
 #### Immutable Options
@@ -57,34 +53,62 @@ The following options are provided as environment variables for Docker deploymen
 | CHARSET              | No       | UTF8                 | The default character set that will be used by the database. The value can be overridden to another valid character set.             |
 | NO_REDWOOD_COMPAT    | No       | false                | Specifies if EDB Postgres Advanced Server will be installed in a mode that does not provide compatibility features for Oracle databases.  Compatibility with Oracle will be provided by default.  Must be overridden to `true` if compatability with Oracle is not needed.   |
 
+## Deploy using Docker Command Line
 
-### Deployment Examples
-
-* EDB Postgres Advanced Server with defaults and compatibility with Oracle database (redwood on) 
+* EDB Postgres Advanced Server with defaults and compatibility with Oracle database (redwood) 
   ```
   docker run --detach --name edb-postgres \
   --env PG_PASSWORD=mypassword --env PG_INITDB=true \
-  quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
+  quay.io/edb/postgres-advanced-server-12:latest bash -c '/police.sh && /launch.sh'
   ```
-* EDB Postgres Advanced Server with defaults and compatibility with PostgreSQL database (redwood mode off)
-  ```  
+
+* EDB Postgres Advanced Server with defaults and compatibility with PostgreSQL database (no redwood)
+  ```
   docker run --detach --name edb-postgres \
   --env PG_PASSWORD=mypassword --env PG_INITDB=true --env NO_REDWOOD_COMPAT=true \
-  quay.io/edb/postgres-advanced-server-11:latest bash -c '/police.sh && /launch.sh'
+  quay.io/edb/postgres-advanced-server-12:latest bash -c '/police.sh && /launch.sh'
   ```
-* PostgreSQL with persistent volume for data (v11 shown)
-        
-    i. Create local data directory
- 
-        mkdir <local-data-directory>
+
+* EDB Postgres Advanced Server with defaults and persistent data
+
+  * Create local data directory
+      ```
+      mkdir data
+      ```
+   
+  * Deploy EDB Postgres Advanced Server container
+      ```
+      docker run --detach --name edb-postgres \
+      --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v ./data:/data \
+      quay.io/edb/postgres-advanced-server-12:latest bash -c '/police.sh && /launch.sh'
+      ```
+
+## Deploy using Docker Compose
+
+* EDB Postgres Advanced Server with defaults and compatibility with Oracle database (redwood)  
+  ```
+  docker-compose -f examples/epas_v12.yaml up --detach
+  ```
+
+* EDB Postgres Advanced Server with defaults and compatibility with PostgreSQL database (no redwood)
+    ```
+    docker-compose -f examples/epas_v12_noredwood.yaml up --detach
+    ```
+
+* EDB Postgres Advanced Server with defaults and persistent data
+
+  * Create storage volume
+    ```
+    mkdir data
+    docker volume create --driver local --opt type=none --opt device=./data --opt o=bind pgdata
+    ```
     
-    ii. Deploy a PostgreSQL container
-       
-        docker run --detach --name edb-postgres \
-        --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v <local-data-directory>:/data \
-        quay.io/edb/postgresql-11:latest bash -c '/police.sh && /launch.sh'
-        
-     For more information, refer to [Using Storage Volumes](https://docs.docker.com/storage/volumes/) documention from Docker.
+   * Deploy EDB Postgres Advanced Server container   
+     ```
+     docker-compose -f examples/epas_v12_pgdata.yaml up --detach
+     ```
+For more information on using Storage Volumes, refer to the [Docker](https://docs.docker.com/storage/volumes/) documentation.
+
 
 ## Verification
 
@@ -109,7 +133,7 @@ After verifying successful deployment, the PostgreSQL or EDB Postgres Advanced S
    ```
    postgres=# select version();
    postgres=# create table mytable1(var1 text);
-   postgres=# insert into mytable1 values ('hi from pg 11');
+   postgres=# insert into mytable1 values ('hi from pg 12');
    postgres=# select * from mytable1;
    ```
 1. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
@@ -122,4 +146,4 @@ After verifying successful deployment, the PostgreSQL or EDB Postgres Advanced S
    redwood
    (1 row)
    ```
-   The value will be `postgres` if the database is running with compatibility with PostrgreSQL database (non-redwood).
+   The value will be `postgres` if the database is running with compatibility with PostrgreSQL database (no redwood).
