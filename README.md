@@ -18,6 +18,7 @@ Common use cases supported include:
 
 ## Getting Started
 
+### Prerequisites
 1. Obtain credentials to access the  [quay.io](https://quay.io) container registry.  This repository is where EDB container images are published. 
 
 1. Obtain access to [EDB's quay repositories](https://quay.io/organization/edb) by contacting [EDB](https://github.com/EnterpriseDB/edb-k8s-doc/issues/new?assignees=&labels=&template=quay-io-request-access.md&title=).
@@ -35,7 +36,9 @@ Common use cases supported include:
    kubectl apply -f setup/scc.yaml
    ```
 
-1. Deploy EDB container images using:
+### Deployment
+
+EDB provides several methods for deploying our container images.
 
    * [Docker Command Line Interface (CLI)](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/Docker)
    * [Helm Charts](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-helm)
