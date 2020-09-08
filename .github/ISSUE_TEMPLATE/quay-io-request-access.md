@@ -11,7 +11,10 @@ assignees: dmnemec, kelpoole, taylorgrahamedb, theadamwright
 username: John_Doe
 
 **If user has no Quay.io account provide email**
-Email: Joe.Doe@somecompany.com
+Email: John.Doe@somecompany.com
+
+** EDB Sales Engineer for Account **
+Name: Taylor Graham 
 
 ** Fill out client info **
 Name: John Doe 

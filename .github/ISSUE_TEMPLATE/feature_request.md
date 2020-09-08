@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: ''
 labels: ''
-assignees: dmnemec, theadamwright, kelpoole, taylorgrahamedb
+assignees: dmnemec, kelpoole, taylorgrahamedb, theadamwright
 
 ---
 
