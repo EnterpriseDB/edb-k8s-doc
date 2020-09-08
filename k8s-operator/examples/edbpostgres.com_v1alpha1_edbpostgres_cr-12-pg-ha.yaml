@@ -1,0 +1,43 @@
+apiVersion: edbpostgres.com/v1alpha1
+kind: EDBPostgres
+metadata:
+  name: edb-pg-12-ha
+spec:
+  # ---------------------------------
+  # IMPORTANT: In this CR you will find an example of all options and possible configurations.
+  # However, by default values are applied by the operator if values are not specified below.
+  # ---------------------------------
+
+  # ---------------------------------
+  # ## Default Setup
+  # ---------------------------------
+
+  clusterSize: 2
+  databaseMemoryLimit: "2Gi"
+  databaseMemoryRequest: "1Gi"
+  databaseCPULimit: "1000m"
+  databaseCPU: "50m"
+  databaseStorageRequest: "5Gi"
+  databaseStorageClass: "edb-storageclass"
+  databaseArchiveStorageClass: "edb-storageclass"
+  databaseWalStorageClass: "edb-storageclass"
+  databasePort: 5432
+  containerImagePullPolicy: Always
+  serviceAccount: "edb-operator"
+  highAvailability:
+    enable: true
+    image:  "quay.io/edb/stolon:v1-ubi7-amd64"
+    podDebug: "true"
+  # The imaged used in this project is from Red Hat. See more in https://docs.okd.io/latest/using_images/db_images/postgresql.html
+  image: "quay.io/edb/postgresql-12:ubi7-amd64"
+  secretName: "edb-pg-as12-secret"
+  postgresType: "PG"
+  postgresVersion: 12
+  primaryConfig:
+    max_connections: "150"
+  customLabels:
+    environment: sandbox
+    developer: oscar2
+  customAnnotations:
+    maker: omh
+    operator_vendor: edb

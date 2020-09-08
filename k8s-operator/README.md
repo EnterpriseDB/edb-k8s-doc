@@ -21,11 +21,11 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
 
 ### PostgreSQL Distributions
 * PostgreSQL
-  * v11
+  * v10-12
 * EDB Postgres Advanced Server compatibility with Oracle (redwood)
-  * v11
+  * v10-12
 * EDB Postgres Advanced Server compatibility with PostgreSQL (non-redwood)
-  * v11
+  * v10-12
 
 ### Platforms
 * OpenShift Container Platform 4.4
@@ -71,7 +71,7 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
    ```
 1. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-operator` service account by using the following command:
    ```
-   oc adm policy add-scc-to-user edb-scc -z edb-operator
+   oc adm policy add-scc-to-user edb-scc -z edb-operator -n <your-namespace>
    ```
 
 ## Design Overview
@@ -125,24 +125,24 @@ Storing the state in a configmap, gives the operator the ability to change the s
 
    * PostgreSQL 
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-no-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-no-ha.yaml -n <your-namespace>
      ```  
      
    * EDB Postgres Advanced Server (EPAS)  
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-epas-no-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-epas-no-ha.yaml -n <your-namespace>
      ```
 
 ### Deploying high availability PostgreSQL cluster (multiple instances)
 
    * PostgreSQL
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-ha.yaml -n <your-namespace>
      ```
      
    * EDB Postgres Advanced Server (EPAS)  
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-epas-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-epas-ha.yaml -n <your-namespace>
      ```
 
 ## Verification
@@ -151,12 +151,12 @@ After deploying with the EDB Operator, run the following command to verify the s
 ```
 $ kubectl get deploy -n <your-namespace>
 ```
-If the deployment is successful, the output of the command for an HA specification of EDB Postgres Advanced Server v11 will show the number of cluster-aware proxies (edb-epas-11-proxy) and sentinels (edb-epas-11-sentinel) matching the clusterSize requested:
+If the deployment is successful, the output of the command for an HA specification of EDB Postgres Advanced Server v12 will show the number of cluster-aware proxies (edb-epas-12-proxy) and sentinels (edb-epas-12-sentinel) matching the clusterSize requested:
 
 ```
 NAME                  READY  UP-TO-DATE   AVAILABLE   AGE
-edb-epas-11-proxy     5/5    5            5           4d19h
-edb-epas-11-sentinel  5/5    5            5           4d19h
+edb-epas-12-proxy     5/5    5            5           4d19h
+edb-epas-12-sentinel  5/5    5            5           4d19h
 edb-operator          2/2    2            2           4d19h
 ```
  
@@ -164,24 +164,24 @@ In addtion after the deployment, run the following command to verify the status 
 ```
 $ kubectl get pod -n <your-namespace>
 ```
-If the deployment is successful, the output of the command for an HA specification of EDB Postgres Advanced Server v11 will show all pods ready and a status of Available status as follows:
+If the deployment is successful, the output of the command for an HA specification of EDB Postgres Advanced Server v12 will show all pods ready and a status of Available status as follows:
 ```
 NAME                                      READY    STATUS    RESTARTS  AGE
-edb-epas-11-0                             1/1 	   Running   0         5d21h
-edb-epas-11-1                             1/1 	   Running   0         5d21h
-edb-epas-11-2                             1/1 	   Running   0         5d21h
-edb-epas-11-3                             1/1 	   Running   0         5d21h
-edb-epas-11-4                             1/1 	   Running   0         5d21h
-edb-epas-11-proxy-858f6bb967-bm97j        1/1 	   Running   0         5d21h
-edb-epas-11-proxy-858f6bb967-j6q7v        1/1 	   Running   0         5d21h
-edb-epas-11-proxy-858f6bb967-ntnfh        1/1 	   Running   0         5d21h
-edb-epas-11-proxy-858f6bb967-t6tp9        1/1 	   Running   0         5d21h
-edb-epas-11-proxy-858f6bb967-zk29s        1/1 	   Running   0         5d21h
-edb-epas-11-sentinel-54fff448c5-dl9bc     1/1 	   Running   0         5d21h
-edb-epas-11-sentinel-54fff448c5-mwh2d     1/1 	   Running   0         5d21h
-edb-epas-11-sentinel-54fff448c5-nn4fx     1/1 	   Running   0         5d21h
-edb-epas-11-sentinel-54fff448c5-pdhn8     1/1 	   Running   0         5d21h
-edb-epas-11-sentinel-54fff448c5-tll29     1/1 	   Running   0         5d21h
+edb-epas-12-0                             1/1 	   Running   0         5d21h
+edb-epas-12-1                             1/1 	   Running   0         5d21h
+edb-epas-12-2                             1/1 	   Running   0         5d21h
+edb-epas-12-3                             1/1 	   Running   0         5d21h
+edb-epas-12-4                             1/1 	   Running   0         5d21h
+edb-epas-12-proxy-858f6bb967-bm97j        1/1 	   Running   0         5d21h
+edb-epas-12-proxy-858f6bb967-j6q7v        1/1 	   Running   0         5d21h
+edb-epas-12-proxy-858f6bb967-ntnfh        1/1 	   Running   0         5d21h
+edb-epas-12-proxy-858f6bb967-t6tp9        1/1 	   Running   0         5d21h
+edb-epas-12-proxy-858f6bb967-zk29s        1/1 	   Running   0         5d21h
+edb-epas-12-sentinel-54fff448c5-dl9bc     1/1 	   Running   0         5d21h
+edb-epas-12-sentinel-54fff448c5-mwh2d     1/1 	   Running   0         5d21h
+edb-epas-12-sentinel-54fff448c5-nn4fx     1/1 	   Running   0         5d21h
+edb-epas-12-sentinel-54fff448c5-pdhn8     1/1 	   Running   0         5d21h
+edb-epas-12-sentinel-54fff448c5-tll29     1/1 	   Running   0         5d21h
 edb-operator-6b4d4494c9-hwpr5             1/1 	   Running   0         5d21h
 edb-operator-6b4d4494c9-xwkfp             1/1 	   Running   0         5d21h
 ```
@@ -190,7 +190,7 @@ edb-operator-6b4d4494c9-xwkfp             1/1 	   Running   0         5d21h
 
 ### Compatiblity with Oracle vs Compatiblity with PostgreSQL   
 
-EDB Postgres Advanced Server can be deployed as either compatibility with Oracle (redwood) or compatibility with PostgreSQL (noredwood). For more information about compatibility with Oracle database, refer to <add reference>.
+EDB Postgres Advanced Server can be deployed as either compatibility with Oracle (redwood) or compatibility with PostgreSQL (no redwood). For more information about compatibility with Oracle database, refer to [EDB](https://www.enterprisedb.com/postgres-tutorials/how-run-postgres-oracle-compatibility-mode) documentation.
 
 * Compatibility with Oracle (default)
   ```
@@ -217,7 +217,7 @@ The amount of CPU/Memory/Disk is configurable when deploying.  Initial allocatio
 
 The EDB Operator maintains a desired configuration which can be managed programmatically by keeping PostgreSQL parameters in a specification. This approach ensures the PostgreSQL parameters for each instance in the HA cluster are the same. 
 
-To modify PostgreSQL parameter values, update 'primaryConfig' in the specification as shown in the [edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-customlabels.yaml](/`/examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-customlabels.yaml`) example provided where the max_connections is overriddent to 150: 
+To modify PostgreSQL parameter values, update 'primaryConfig' in the specification as shown in the [edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml](/`/examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml`) example provided where the max_connections is overriddent to 150: 
 ```
  primaryConfig:
    max_connections: "150"
@@ -225,10 +225,10 @@ To modify PostgreSQL parameter values, update 'primaryConfig' in the specificati
 
 Apply the updated specification to Kubernetes and the operator will ensure parameter changes are made on each node if they do not require a restart: 
 ```
-kubectl apply -f /examples/edbpostgres.com_v1alpha1_edbpostgres_cr-11-pg-customlabels.yaml -n <your-namespace>
+kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml -n <your-namespace>
 ```
 
-**Note:** The following parameters, if defined in the cluster specification, will be ignored since they are managed by stolon and cannot be defined by the user:
+**Note:** The following parameters, if defined in the cluster specification, will be ignored since they are managed by Stolon and cannot be defined by the user:
 ```
 listen_addresses
 port

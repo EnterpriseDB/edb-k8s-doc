@@ -9,7 +9,7 @@ resources:
 - pull-secret.yaml
 
 secretGenerator:
-- name: edb-pg-as11-secret
+- name: edb-pg-as12-secret
   literals:
   - USING_SECRET='true'
   - PG_USER='enterprisedb'
