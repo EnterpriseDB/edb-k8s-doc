@@ -6,9 +6,9 @@ kind: Service
 metadata:
   labels:
     # Use the same label for all parts of the application.
-    app: edb-epas11-redwood
+    app: edb-epas12-redwood
   # The name of the service (same as the statefulset name).
-  name: edb-epas-v11-redwood
+  name: edb-epas-v12-redwood
 spec:
   # Can be changed to allow for external trafic.
   # As an alternative for external connectivity look at Jaeger or Traefik.
@@ -22,29 +22,29 @@ spec:
     targetPort: 5444
   selector:
     # Must conform to the label of the statefulset.
-    app: edb-epas11-redwood
+    app: edb-epas12-redwood
     # Forward trafic to pod-0 only.
-    statefulset.kubernetes.io/pod-name: edb-epas-v11-redwood-0
+    statefulset.kubernetes.io/pod-name: edb-epas-v12-redwood-0
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   # The name of the statefulset (same as the service name).
-  name: edb-epas-v11-redwood
+  name: edb-epas-v12-redwood
 spec:
   selector:
     matchLabels:
       # Needs to conform to the label of the statefulset.
-      app: edb-epas11-redwood
+      app: edb-epas12-redwood
   # Must point to the name of the service defined earlier.
-  serviceName: edb-epas-v11-redwood
+  serviceName: edb-epas-v12-redwood
   # Defines the number of pods in the statefulset. Default is 1.
   replicas: 1
   template:
     metadata:
       labels:
         # Use the same label for all parts of the application.
-        app: edb-epas11-redwood
+        app: edb-epas12-redwood
     spec:
       # The service account used for deploying the statefulset.
       # The service account should have sufficient permissions.
@@ -56,7 +56,7 @@ spec:
       containers:
         - name: edb-database
           # Name of the image to be used for running Postgres
-          image: "quay.io/enterprisedb/postgres11-advanced-server:latest"
+          image: "quay.io/enterprisedb/postgres12-advanced-server:latest"
           # Frequency that a new version of the image should be pulled; "Always" will pull on every reschedule.
           imagePullPolicy: Always
           command: ["/bin/bash"]

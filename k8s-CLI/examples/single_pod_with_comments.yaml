@@ -6,9 +6,9 @@ kind: Service
 metadata:
   labels:
     # Use the same label for all parts of the application.
-    app: edb-epas11-redwood-single
+    app: edb-epas12-redwood-single
   # The name of the service (same as the pod name).
-  name: edb-epas-v11-redwood-single
+  name: edb-epas-v12-redwood-single
 spec:
   # This can be changed to allow for external trafic.
   # As an alternative for external connectivity look at Jaeger or Traefik.
@@ -22,16 +22,16 @@ spec:
     targetPort: 5444
   selector:
     # This needs to conform to the label of the pod.
-    app: edb-epas11-redwood-single
+    app: edb-epas12-redwood-single
 ---
 apiVersion: v1
 kind: Pod
 metadata:
   # The name of the pod (same as the service name).
-  name: edb-epas-v11-redwood-single
+  name: edb-epas-v12-redwood-single
   labels:
     # Use the same label for all parts of the application.
-    app: edb-epas11-redwood-single
+    app: edb-epas12-redwood-single
 spec:
   # The service account used for deploying the pods.
   # The service account should have sufficient permissions.
@@ -42,7 +42,7 @@ spec:
   containers:
     - name: edb-database
       # Name of the image to be used for running Postgres
-      image: "quay.io/enterprisedb/postgres11-advanced-server:latest"
+      image: "quay.io/enterprisedb/postgres12-advanced-server:latest"
       # Frequency that a new version of the image should be pulled; "Always" will pull on every reschedule.
       imagePullPolicy: Always
       command: ["/bin/bash"]
