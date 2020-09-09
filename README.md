@@ -26,7 +26,7 @@ Common use cases supported include:
 
 1. Activate access to the private EDB repositories by using the link provided in the invite email for [Quay.io](https://quay.io).  It could take up to 24 hours to receive the invite email. 
    * Existing users, the [EDB repositories](https://quay.io/organization/edb) will be immediately accessible.
-   * New users, a Quay.io account will be asked to create an account and then the EDB repositories will be accessible.
+   * New users, a Quay.io account will need to be created and then the EDB repositories will be accessible.
    
 1. (For OpenShift) Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for two of the most common public cloud platforms:
 
