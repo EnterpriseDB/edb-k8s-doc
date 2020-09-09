@@ -19,10 +19,15 @@ Common use cases supported include:
 ## Getting Started
 
 ### Prerequisites
-1. Obtain credentials to access the  [quay.io](https://quay.io) container registry.  This repository is where EDB container images are published. 
 
-1. Obtain access to [EDB's quay repositories](https://quay.io/organization/edb) by contacting [EDB](https://github.com/EnterpriseDB/edb-k8s-doc/issues/new?assignees=&labels=&template=quay-io-request-access.md&title=).
+1. Contact [EDB](https://github.com/EnterpriseDB/edb-k8s-doc/issues/new?assignees=&labels=&template=quay-io-request-access.md&title=) to obtain access to EDB's Quay.io repositories.  
+   * Existing users, provide your Quay.io user name.  
+   * New users, provide your email address.
 
+1. Activate access to the private EDB repositories by using the link provided in the invite email for [Quay.io](https://quay.io).  It could take up to 24 hours to receive the invite email. 
+   * Existing users, the [EDB repositories](https://quay.io/organization/edb) will be immediately accessible.
+   * New users, a Quay.io account will be asked to create an account and then the EDB repositories will be accessible.
+   
 1. (For OpenShift) Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for two of the most common public cloud platforms:
 
    * AWS EBS `kubectl apply -f setup/storage-class-aws-ebs.yaml`
@@ -40,7 +45,7 @@ Common use cases supported include:
 
 EDB provides several methods for deploying our container images.
 
-   * [Docker Command Line Interface (CLI)](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/Docker)
+   * [Docker](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/Docker)
    * [Helm Charts](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-helm)
    * [Kubernetes Command Line Interface (CLI)](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-CLI)
    * [Kubernetes Operator](https://github.com/EnterpriseDB/edb-k8s-doc/tree/master/k8s-operator)
