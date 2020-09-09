@@ -1,6 +1,6 @@
 # The name of the statefulset and service.
 name: edb-as
-label: edb-as11-redwood
+label: edb-as12-redwood
 
 # Name of service account to used for the pod
 serviceAccountName: edb-helm
@@ -19,7 +19,7 @@ deploymentType: Statefulset
 acceptEULA: "No"
 
 # Name of the image to be used for running Postgres
-image: "quay.io/edb/postgres-advanced-server-11:latest"
+image: "quay.io/edb/postgres-advanced-server-12:latest"
 
 # Frequency that a new version of the image should be pulled; "Always" will pull on every reschedule.
 pullPolicy: "Always"

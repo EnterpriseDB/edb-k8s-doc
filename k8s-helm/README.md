@@ -10,7 +10,8 @@ Complete all of the prerequisites before using the Helm charts. The prerequisite
    ```
    kubectl create ns <your-namespace>
    ```
-   For more information, refer to the [Creating a Namespace](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace) documentation provided by k8s.io.
+   For more information, refer to the [Creating a Namespace](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace) documentation provided by Kubernetes.
+   
 1. Create a secret for pulling images from quay.io in the namespace; the secret will be used when deploying container images:
    ```
    kubectl create secret docker-registry <regcred> --docker-server=<your-registry-server> \
@@ -23,7 +24,9 @@ Complete all of the prerequisites before using the Helm charts. The prerequisite
    * `<your-name>` is your quay.io username 
    * `<your-pword>` is your quay.io password  
    * `<your-email>` is your email address as used to retrieve the quay.io credentials
-   For more information, refer to [Creating a Secret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-by-providing-credentials-on-the-command-line) documentation provided by k8s.io.
+   
+   For more information on why and how to use secrets, refer to [Secret](https://kubernetes.io/docs/concepts/configuration/secret/) documentation provided by Kubernetes.
+   
 1. Create the `edb-helm` service account in the namespace to run the pods securely using the following command:
    ```
    kubectl apply -f setup/service-account.yaml -n <your-namespace> 
@@ -34,7 +37,7 @@ Complete all of the prerequisites before using the Helm charts. The prerequisite
    ``` 
 1. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-helm` service account by using the following command:
    ```
-   oc adm policy add-scc-to-user edb-scc -z edb-helm 
+   oc adm policy add-scc-to-user edb-scc -z edb-helm -n <your-namespace>
    ```
 
  
@@ -52,32 +55,32 @@ To use the charts with the provided sample values files, you must:
 ### Deploying a Single pod
 
 For deploying a single pod, run one of the following commands depending on the preferred distribution:
-* PostgreSQL v11: 
+* PostgreSQL v12: 
   ```
-  helm install postgres11-single charts/postgresql \
-  -f examples/values-pg-v11-single.yaml \
+  helm install postgres12-single charts/postgresql \
+  -f examples/values-pg-v12-single.yaml --set acceptEULA=Yes \
   -n <your-namespace>
   ```
-* Advanced Server v11 compatibility with Oracle: 
+* Advanced Server v12 compatibility with Oracle: 
   ```
-  helm install epas11-single charts/postgresql \
-  -f examples/values-epas-v11-redwood-single.yaml \
+  helm install epas12-single charts/postgresql \
+  -f examples/values-epas-v12-redwood-single.yaml --set acceptEULA=Yes \
   -n <your-namespace>
   ```
 
 ### Deploying a StatefulSet
 
 For deploying a StatefulSet, run one of the following commands dependinig on the preferred distribution:
-* PostgreSQL v11: 
+* PostgreSQL v12: 
   ```
-  helm install postgres11-statefulset charts/postgresql \
-  -f examples/values-pg-v11-statefulset.yaml \
+  helm install postgres12-statefulset charts/postgresql \
+  -f examples/values-pg-v12-statefulset.yaml --set acceptEULA=Yes \
   -n <your-namespace>
   ```
-* Advanced Server v11 with compatibility with Oracle: 
+* Advanced Server v12 with compatibility with Oracle: 
   ```
-  helm install epas11-statefulset charts/postgresql \
-  -f examples/values-epas-v11-redwood-statefulset.yaml \
+  helm install epas12-statefulset charts/postgresql \
+  -f examples/values-epas-v12-redwood-statefulset.yaml --set acceptEULA=Yes \
   -n <your-namespace>
   ```
 
@@ -89,11 +92,11 @@ Once the container has been deployed, run the following command to verify the st
 ```
 kubectl get pods -n <your-namespace> 
 ```
-If the deployment is successful, the output of the previous command for EDB Postgres Advanced Server v11 will show all pods ready, and a status of Running as follows:
+If the deployment is successful, the output of the previous command for EDB Postgres Advanced Server v12 will show all pods ready, and a status of Running as follows:
 
     NAME                                 READY   STATUS    RESTARTS   AGE
-    edb-epas-v11-redwood-single          1/1     Running   0          2m7s
-    edb-epas-v11-redwood-statefulset-0   1/1     Running   0          3m12s
+    edb-epas-v12-redwood-single          1/1     Running   0          2m7s
+    edb-epas-v12-redwood-statefulset-0   1/1     Running   0          3m12s
 
 ## Using PostgreSQL
 
@@ -105,11 +108,11 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
 
    * Single Pod:
      ```
-     kubectl exec -it edb-epas-v11-redwood-single -n <your-namespace> -- bash
+     kubectl exec -it edb-epas-v12-redwood-single -n <your-namespace> -- bash
      ```
    * StatefulSet:
      ```
-     kubectl exec -it edb-epas-v11-redwood-statefulset -n <your-namespace> -- bash
+     kubectl exec -it edb-epas-v12-redwood-statefulset -n <your-namespace> -- bash
      ```
 1. Log into the database:
    ```
@@ -119,7 +122,7 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
    ```
    edb=# select version();
    edb=# create table mytable1(var1 text);
-   edb=# insert into mytable1 values ('hi from epas 11');
+   edb=# insert into mytable1 values ('hi from epas 12');
    edb=# select * from mytable1;
    ```
 1. (For EDB Postgres Advanced Server), check compatibility with Oracle database:   
@@ -138,36 +141,36 @@ After verifying successful deployment to Kubernetes via Helm, the PostgreSQL or 
 
 1. Forward a local port to the database port in the container:
    ```
-   kubectl port-forward edb-epas-v11-redwood-single <local-port>:5444 -n <your-namespace> 
+   kubectl port-forward edb-epas-v12-redwood-single <local-port>:5444 -n <your-namespace> 
    ```
 1. Access the Postgres database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step.
 
 ## Deleting Kubernetes Objects
 
 1. The following commands delete the Helm charts installed with the deployments: 
-   * PostgreSQL v11: 
+   * PostgreSQL v12: 
      ```
-     helm delete postgres11-single -n <your-namespace>
-     helm delete postgres11-statefulset -n <your-namespace>
+     helm delete postgres12-single -n <your-namespace>
+     helm delete postgres12-statefulset -n <your-namespace>
      ```
-   * Advanced Server v11 with compatibility with Oracle database:
+   * Advanced Server v12 with compatibility with Oracle database:
      ```
-     helm delete epas11-single -n <your-namespace>
-     helm delete epas11-statefulset -n <your-namespace>
+     helm delete epas12-single -n <your-namespace>
+     helm delete epas12-statefulset -n <your-namespace>
      ```
      
 1. The following commands delete any PVC's created with StatefulSet deployments:
-   * PostgreSQL v11: 
+   * PostgreSQL v12: 
      ```
-     kubectl delete pvc data-edb-pg-v11-statefulset-0 -n <your-namespace>
-     kubectl delete pvc wal-edb-pg-v11-statefulset-0 -n <your-namespace>
-     kubectl delete pvc walarchive-edb-pg-v11-statefulset-0 -n <your-namespace>
+     kubectl delete pvc data-edb-pg-v12-statefulset-0 -n <your-namespace>
+     kubectl delete pvc wal-edb-pg-v12-statefulset-0 -n <your-namespace>
+     kubectl delete pvc walarchive-edb-pg-v12-statefulset-0 -n <your-namespace>
      ```
-   * Advanced Server v11 with compatibility with Oracle database:
+   * Advanced Server v12 with compatibility with Oracle database:
      ```
-     kubectl delete pvc data-edb-epas-v11-redwood-statefulset-0 -n <your-namespace>
-     kubectl delete pvc wal-edb-epas-v11-redwood-statefulset-0 -n <your-namespace>
-     kubectl delete pvc walarchive-edb-epas-v11-redwood-statefulset-0 -n <your-namespace>
+     kubectl delete pvc data-edb-epas-v12-redwood-statefulset-0 -n <your-namespace>
+     kubectl delete pvc wal-edb-epas-v12-redwood-statefulset-0 -n <your-namespace>
+     kubectl delete pvc walarchive-edb-epas-v12-redwood-statefulset-0 -n <your-namespace>
      ```
 
 1. If the same namespace will be used again for deployments, skip this step. Otherwise, the following commands delete installed prerequisites: 
