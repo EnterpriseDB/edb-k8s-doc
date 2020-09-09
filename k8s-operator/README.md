@@ -67,7 +67,7 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
    ```
 1. Deploy the Operator by running the following command:
    ```
-   kubectl apply -k . -n <your-namespace>
+   kubectl apply -k operator/. -n <your-namespace>
    ```
 1. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-operator` service account by using the following command:
    ```
