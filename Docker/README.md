@@ -79,7 +79,7 @@ The following options are provided as environment variables for Docker deploymen
   * Deploy EDB Postgres Advanced Server container
       ```
       docker run --detach --name edb-postgres \
-      --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v ./data:/data \
+      --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v data:/data \
       quay.io/edb/postgres-advanced-server-12:latest bash -c '/police.sh && /launch.sh'
       ```
 
