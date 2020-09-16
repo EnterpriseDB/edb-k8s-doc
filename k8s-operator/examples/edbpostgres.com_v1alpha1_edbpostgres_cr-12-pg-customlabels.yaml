@@ -30,7 +30,7 @@ spec:
     image:  "quay.io/edb/stolon:v1-ubi7-amd64"
     podDebug: "false"
   # The imaged used in this project is from Red Hat. See more in https://docs.okd.io/latest/using_images/db_images/postgresql.html
-  image: "quay.io/edb/postgresql-12:ubi7-amd64"
+  image: "quay.io/edb/postgresql-12:latest"
   secretName: "edb-pg-as12-secret"
   postgresType: "PG"
   postgresVersion: 12

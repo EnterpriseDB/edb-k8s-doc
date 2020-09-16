@@ -2,7 +2,7 @@
 
 ## Overview
 
-The EDB Operator (edb-operator) simplifies database administrator tasks for deploying and managing PostgreSQL and EDB Postgres Advanced Server clusters on Kubernetes. The EDB Operator incorporates domain expertise and years of practical experience for maintaining and configuring Postgres database clusters. 
+The EDB Operator (edb-operator) simplifies database administration tasks for deploying and managing PostgreSQL and EDB Postgres Advanced Server clusters on Kubernetes. The EDB Operator incorporates domain expertise and years of practical experience for maintaining and configuring PostgreSQL database clusters. 
 
 The EDB Operator can:
 * deploy with or without streaming replication
@@ -33,6 +33,10 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
 ## Prerequisites
 1. Obtain access to a Kubernetes cluster.
 
+1. Deploy the customer resource definitions (CRD) by running the following command:
+   ```
+   kubectl apply -k operator/crds/.
+   ```
 1. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
@@ -41,7 +45,7 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
    ```
    kubectl version --short | grep Client
    ```
-1. Create an image-pull-secret by editing and running the following command based on the `kubectl` **client** version:
+1. Create a [Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/) to pull container images from quay.io by editing and running the following command based on the `kubectl` **client** version:
 
    * version 1.17.x or earlier
      ```
@@ -59,12 +63,8 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
      --docker-password=<DOCKER_PASSWORD> \
      --docker-email=<DOCKER_EMAIL> -n <your-namespace> -o yaml > operator/pull-secret.yaml
      ```  
-   For more information on why and how to use secrets, refer to [Secret](https://kubernetes.io/docs/concepts/configuration/secret/) documentation provided by Kubernetes.
 1. Modify the database login credentials by editing the literal values in `operator/kustomization.yaml`
-1. Deploy the CRD by running the following command:
-   ```
-   kubectl apply -k operator/crds/.
-   ```
+
 1. Deploy the Operator by running the following command:
    ```
    kubectl apply -k operator/. -n <your-namespace>
@@ -166,24 +166,18 @@ $ kubectl get pod -n <your-namespace>
 ```
 If the deployment is successful, the output of the command for an HA specification of EDB Postgres Advanced Server v12 will show all pods ready and a status of Available status as follows:
 ```
-NAME                                      READY    STATUS    RESTARTS  AGE
-edb-epas-12-0                             1/1 	   Running   0         5d21h
-edb-epas-12-1                             1/1 	   Running   0         5d21h
-edb-epas-12-2                             1/1 	   Running   0         5d21h
-edb-epas-12-3                             1/1 	   Running   0         5d21h
-edb-epas-12-4                             1/1 	   Running   0         5d21h
-edb-epas-12-proxy-858f6bb967-bm97j        1/1 	   Running   0         5d21h
-edb-epas-12-proxy-858f6bb967-j6q7v        1/1 	   Running   0         5d21h
-edb-epas-12-proxy-858f6bb967-ntnfh        1/1 	   Running   0         5d21h
-edb-epas-12-proxy-858f6bb967-t6tp9        1/1 	   Running   0         5d21h
-edb-epas-12-proxy-858f6bb967-zk29s        1/1 	   Running   0         5d21h
-edb-epas-12-sentinel-54fff448c5-dl9bc     1/1 	   Running   0         5d21h
-edb-epas-12-sentinel-54fff448c5-mwh2d     1/1 	   Running   0         5d21h
-edb-epas-12-sentinel-54fff448c5-nn4fx     1/1 	   Running   0         5d21h
-edb-epas-12-sentinel-54fff448c5-pdhn8     1/1 	   Running   0         5d21h
-edb-epas-12-sentinel-54fff448c5-tll29     1/1 	   Running   0         5d21h
-edb-operator-6b4d4494c9-hwpr5             1/1 	   Running   0         5d21h
-edb-operator-6b4d4494c9-xwkfp             1/1 	   Running   0         5d21h
+NAME                                        READY   STATUS    RESTARTS  AGE
+edb-epas-12-ha-0                            1/1     Running   0         5d21h
+edb-epas-12-ha-1                            1/1     Running   0         5d21h
+edb-epas-12-ha-2                            1/1     Running   0         5d21h
+edb-epas-12-ha-proxy-858f6bb967-bm97j       1/1     Running   0         5d21h
+edb-epas-12-ha-proxy-858f6bb967-j6q7v       1/1     Running   0         5d21h
+edb-epas-12-ha-proxy-858f6bb967-ntnfh       1/1     Running   0         5d21h
+edb-epas-12-ha-sentinel-54fff448c5-dl9bc    1/1     Running   0         5d21h
+edb-epas-12-ha-sentinel-54fff448c5-mwh2d    1/1     Running   0         5d21h
+edb-epas-12-ha-sentinel-54fff448c5-nn4fx    1/1     Running   0         5d21h
+edb-operator-6b4d4494c9-hwpr5               1/1     Running   0         5d21h
+edb-operator-6b4d4494c9-xwkfp               1/1     Running   0         5d21h
 ```
 
 ## Configuration
@@ -217,7 +211,7 @@ The amount of CPU/Memory/Disk is configurable when deploying.  Initial allocatio
 
 The EDB Operator maintains a desired configuration which can be managed programmatically by keeping PostgreSQL parameters in a specification. This approach ensures the PostgreSQL parameters for each instance in the HA cluster are the same. 
 
-To modify PostgreSQL parameter values, update 'primaryConfig' in the specification as shown in the [edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml](/`/examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml`) example provided where the max_connections is overriddent to 150: 
+To modify PostgreSQL parameter values, update 'primaryConfig' in the specification as shown in the [edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml](examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-as-ha-exporter-customlabels.yaml) example provided where the max_connections is overriddent to 150: 
 ```
  primaryConfig:
    max_connections: "150"
@@ -287,11 +281,21 @@ _All steps assume user has access to the Openshift GUI and kubectl in the termin
 
 ### Delete the operator from a namespace (infrequent)
 
-*   From the command line, run `kubectl delete -k . -n <your-namespace>`
-*   After all pods have been terminated, remove the associated PVCs by running `kubectl delete pvc -l owner=edb-operator -n <your-namespace>`
+*   Delete the objects created in the 'operator' directory based on kustomization.yaml using the following command: 
+    ```
+    kubectl delete -k operator/. -n <your-namespace>
+    ```
+*   After all pods have been terminated, remove the associated PVCs using the following command:
+    ```
+    kubectl delete pvc -l owner=edb-operator -n <your-namespace>
+    ``` 
+*  In some instances, the configmap created by the operator may not get deleted when the operator is deleted.  Ensure the configmap has been deleted using the following command:    
+   ```
+   kubectl get configmap -l owner=edb-operator -n <your-namespace>
+   ```
+*  If the configmap still exists, remove it using the following commands:
+   ```
+   kubectl patch $(kubectl get configmap -o name -l owner=edb-operator -n <your-namespace>) -p '{"metadata":{"finalizers":null}}' -n <your-namepace>
+   kubectl delete configmap  -l owner=edb-operator -n <your-namespace>
+   ```
 
-### Delete the custom resource definition (CRD) and operator from a cluster (rare) 
-
-*   From the command line, run `kubectl delete -k operator/crds/.`
-*   From the command line, run `kubectl delete -k . -n <your-namespace>`
-*   After all pods have been terminated, remove the associated PVCs by running `kubectl delete pvc -l owner=edb-operator -n <your-namespace>`

@@ -28,7 +28,7 @@ spec:
     enable: true
     image:  "quay.io/edb/stolon:v1-ubi7-amd64"
     podDebug: "false"
-  image: "quay.io/edb/postgresql-12:ubi7-amd64"
+  image: "quay.io/edb/postgresql-12:latest"
   secretName: "edb-pg-as12-secret"
   postgresType: "PG"
   postgresVersion: 12

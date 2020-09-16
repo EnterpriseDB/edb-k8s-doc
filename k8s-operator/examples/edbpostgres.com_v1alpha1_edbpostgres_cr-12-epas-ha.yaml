@@ -1,7 +1,7 @@
 apiVersion: edbpostgres.com/v1alpha1
 kind: EDBPostgres
 metadata:
-  name: edb-epas-12
+  name: edb-epas-12-ha
 spec:
   # ---------------------------------
   # IMPORTANT: In this CR you will find an example of all options and possible configurations.
@@ -30,15 +30,15 @@ spec:
     image:  "quay.io/edb/stolon:v1-ubi7-amd64"
     podDebug: "false"
   # The imaged used in this project is from Red Hat. See more in https://docs.okd.io/latest/using_images/db_images/postgresql.html
-  image: "quay.io/edb/postgres-advanced-server-12:ubi7-amd64"
+  image: "quay.io/edb/postgres-advanced-server-12:latest"
   secretName: "edb-pg-as12-secret"
   postgresType: "AS"
   postgresVersion: 12
   primaryConfig:
     max_connections: "150"
   customLabels:
-    environment: sandbox
-    developer: oscar
+    environment: development
+    developer: edb
   customAnnotations:
-    maker: omh
+    maker: edb
     operator_vendor: edb
