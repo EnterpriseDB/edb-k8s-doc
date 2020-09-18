@@ -1,0 +1,35 @@
+apiVersion: edbpostgres.com/v1alpha1
+kind: EDBPostgres
+metadata:
+  name: edb-pg-12-ha
+spec:
+  clusterSize: 3
+  databaseMemoryLimit: "2Gi"
+  databaseMemoryRequest: "1Gi"
+  databaseCPULimit: "1000m"
+  databaseCPU: "50m"
+  databaseStorageRequest: "5Gi"
+  databaseStorageClass: "edb-storageclass"
+  databaseArchiveStorageClass: "edb-storageclass"
+  databaseWalStorageClass: "edb-storageclass"
+  databasePort: 5432
+  serviceAccount: "edb-operator"
+  containerImagePullPolicy: Always
+  noRedwoodCompat: false
+  highAvailability:
+    enable: true
+    image:  "quay.io/edb/stolon:latest"
+    podDebug: "false"
+  image: "quay.io/edb/postgresql-12:latest"
+  secretName: "example-pg-secret"
+  postgresType: "PG"
+  postgresVersion: 12
+  primaryConfig:
+    max_connections: "150"
+  customLabels:
+    environment: development
+    developer: edb
+  customAnnotations:
+    maker: edb
+    operator_vendor: edb
+

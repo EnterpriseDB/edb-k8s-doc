@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edb-operator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: edb-operator
+  template:
+    metadata:
+      labels:
+        name: edb-operator
+    spec:
+      serviceAccountName: edb-operator
+      containers:
+        - name: edb-operator
+          image: quay.io/edb/edb-operator:latest
+          command:
+          - edb-operator
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "edb-operator"
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: 8081
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8081
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
+      imagePullSecrets:
+        - name: quay-regsecret

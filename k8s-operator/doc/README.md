@@ -7,7 +7,8 @@ Please read the [EDB Architecture and Requirements](architecture.md) to understa
 * [Cluster Specification](cluster_spec.md)
 * [Cluster Initialization](initialization.md)
 * [Setting instance parameters](postgres_parameters.md)
-* [Custom pg_hba.conf entries](custom_pg_hba_entries.md)
+* [Setting postgres superuser credentials](../../doc/postgres_superuser_credentials.md)
+* [Custom postgresql.conf entries](custom_postgresql_conf_entries.md)
 * [Stolon Client](stolonctl.md)
 * Backup/Restore
   * [Point In Time Recovery](pitr.md)

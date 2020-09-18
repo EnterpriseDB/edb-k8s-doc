@@ -1,0 +1,33 @@
+apiVersion: edbpostgres.com/v1alpha1
+kind: EDBPostgres
+metadata:
+  name: edb-pg-12-ha
+spec:
+  clusterSize: 3
+  databaseMemoryLimit: "2Gi"
+  databaseMemoryRequest: "1Gi"
+  databaseCPULimit: "100m"
+  databaseCPU: "50m"
+  databaseStorageRequest: "5Gi"
+  databaseStorageClass: "edb-storageclass"
+  databaseArchiveStorageClass: "edb-storageclass"
+  databaseWalStorageClass: "edb-storageclass"
+  databasePort: 5432
+  serviceAccount: "edb-operator"
+  containerImagePullPolicy: Always
+  highAvailability:
+    enable: true
+    image:  "quay.io/edb/stolon:latest"
+    podDebug: "false"
+  image: "quay.io/edb/postgresql-12:latest"
+  secretName: "example-pg-secret"
+  postgresType: "PG"
+  postgresVersion: 12
+  pgExporter:
+    enable: true
+    image: quay.io/edb/pgxexporter:v1-ubi7-amd64
+    command: ["/usr/local/bin/pgx_exporter"]
+    args: ["--enableHAMetrics=true","--log.level=debug"]
+    secretName: edb-exporter-secret
+    extendedQueryConfigMap: edb-monitoring-stats
+    imagePullPolicy: Always

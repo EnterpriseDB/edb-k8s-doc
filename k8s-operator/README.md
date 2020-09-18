@@ -28,46 +28,42 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
   * v10-12
 
 ### Platforms
-* OpenShift Container Platform 4.4
+* OpenShift Container Platform 4.5
 
 ## Prerequisites
+
+### Cluster Prerequisites
 1. Obtain access to a Kubernetes cluster.
 
+1. Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for two of the most common public cloud platforms:
+
+   * AWS EBS `kubectl apply -f setup/storage-class-aws-ebs.yaml`
+
+   * GCE Persistent Disk `kubectl apply -f setup/storage-class-gce-pd.yaml`
+
+   For additional examples, refer to the [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) documentation provided by Kubernetes.
+   
 1. Deploy the customer resource definitions (CRD) by running the following command:
    ```
-   kubectl apply -k operator/crds/.
+   kubectl apply -k setup/crds/.
    ```
+
+1. (For OpenShift) Create a Security Context Constraint (SCC) which includes the required permissions for successful deployment to OpenShift 4.4 or later by using the following command:
+   ```
+   kubectl apply -f setup/scc.yaml
+   ```
+   
+### Namespace Prerequisities   
 1. Obtain access to an existing namespace or create a new namespace to hold the deployment using the following command:
    ```
    kubectl create ns <your-namespace>
    ```
-1. Determine the kubectl **client** version by running the following command:
-   ```
-   kubectl version --short | grep Client
-   ```
-1. Create a [Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/) to pull container images from quay.io by editing and running the following command based on the `kubectl` **client** version:
 
-   * version 1.17.x or earlier
-     ```
-     kubectl create secret docker-registry --dry-run=true edb-operator-pull-secret \
-     --docker-server=<DOCKER_REGISTRY_SERVER> \
-     --docker-username=<DOCKER_USER> \
-     --docker-password=<DOCKER_PASSWORD> \
-     --docker-email=<DOCKER_EMAIL> -n <your-namespace> -o yaml > operator/pull-secret.yaml
-     ```
-   * version 1.18.x or later
-     ```
-     kubectl create secret docker-registry --dry-run=client edb-operator-pull-secret \
-     --docker-server=<DOCKER_REGISTRY_SERVER> \
-     --docker-username=<DOCKER_USER> \
-     --docker-password=<DOCKER_PASSWORD> \
-     --docker-email=<DOCKER_EMAIL> -n <your-namespace> -o yaml > operator/pull-secret.yaml
-     ```  
-1. Modify the database login credentials by editing the literal values in `operator/kustomization.yaml`
+1. Modify the database login credentials by editing the literal values in [setup/kustomization.yaml](setup/kustomization.yaml)
 
 1. Deploy the Operator by running the following command:
    ```
-   kubectl apply -k operator/. -n <your-namespace>
+   kubectl apply -k setup/. -n <your-namespace>
    ```
 1. (For OpenShift), assign the privileges defined in the security context constraint to the `edb-operator` service account by using the following command:
    ```
@@ -121,28 +117,31 @@ Storing the state in a configmap, gives the operator the ability to change the s
 
 ## Deploying with the Operator
 
+Update the value of `<your-pg-secret>` in the example files with the name of secret you created with the database login credentials
+before deploying.
+
 ### Deploying standalone PostgreSQL instances
 
    * PostgreSQL 
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-no-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/pg-12-no-ha.yaml -n <your-namespace>
      ```  
      
    * EDB Postgres Advanced Server (EPAS)  
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-epas-no-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/epas-12-no-ha.yaml -n <your-namespace>
      ```
 
 ### Deploying high availability PostgreSQL cluster (multiple instances)
 
    * PostgreSQL
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/pg-12-ha.yaml -n <your-namespace>
      ```
      
    * EDB Postgres Advanced Server (EPAS)  
      ```
-     kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-epas-ha.yaml -n <your-namespace>
+     kubectl apply -f examples/epas-12-ha.yaml -n <your-namespace>
      ```
 
 ## Verification
@@ -211,7 +210,7 @@ The amount of CPU/Memory/Disk is configurable when deploying.  Initial allocatio
 
 The EDB Operator maintains a desired configuration which can be managed programmatically by keeping PostgreSQL parameters in a specification. This approach ensures the PostgreSQL parameters for each instance in the HA cluster are the same. 
 
-To modify PostgreSQL parameter values, update 'primaryConfig' in the specification as shown in the [edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml](examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-as-ha-exporter-customlabels.yaml) example provided where the max_connections is overriddent to 150: 
+To modify PostgreSQL parameter values, update 'primaryConfig' in the specification as shown in the [examples/pg-12-ha-customlabels.yaml](examples/pg-12-ha-customlabels.yaml) example provided where the max_connections is overridden to 150: 
 ```
  primaryConfig:
    max_connections: "150"
@@ -219,7 +218,7 @@ To modify PostgreSQL parameter values, update 'primaryConfig' in the specificati
 
 Apply the updated specification to Kubernetes and the operator will ensure parameter changes are made on each node if they do not require a restart: 
 ```
-kubectl apply -f examples/edbpostgres.com_v1alpha1_edbpostgres_cr-12-pg-customlabels.yaml -n <your-namespace>
+kubectl apply -f examples/pg-12-customlabels.yaml -n <your-namespace>
 ```
 
 **Note:** The following parameters, if defined in the cluster specification, will be ignored since they are managed by Stolon and cannot be defined by the user:
@@ -283,7 +282,7 @@ _All steps assume user has access to the Openshift GUI and kubectl in the termin
 
 *   Delete the objects created in the 'operator' directory based on kustomization.yaml using the following command: 
     ```
-    kubectl delete -k operator/. -n <your-namespace>
+    kubectl delete -k setup/. -n <your-namespace>
     ```
 *   After all pods have been terminated, remove the associated PVCs using the following command:
     ```
