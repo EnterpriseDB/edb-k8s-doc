@@ -1,6 +1,6 @@
 # The name of the statefulset and service.
 name: edb-as
-label: edb-as12-redwood
+label: edb-as12
 
 # Name of service account to used for the pod
 serviceAccountName: edb-helm
