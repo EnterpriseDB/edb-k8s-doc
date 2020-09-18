@@ -6,9 +6,9 @@ kind: Service
 metadata:
   labels:
     # Use the same label for all parts of the application.
-    app: edb-epas12-redwood
+    app: edb-epas12
   # The name of the service (same as the statefulset name).
-  name: edb-epas-v12-redwood
+  name: edb-epas-12
 spec:
   # Can be changed to allow for external trafic.
   # As an alternative for external connectivity look at Jaeger or Traefik.
@@ -22,29 +22,29 @@ spec:
     targetPort: 5444
   selector:
     # Must conform to the label of the statefulset.
-    app: edb-epas12-redwood
+    app: edb-epas12
     # Forward trafic to pod-0 only.
-    statefulset.kubernetes.io/pod-name: edb-epas-v12-redwood-0
+    statefulset.kubernetes.io/pod-name: edb-epas-12-0
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   # The name of the statefulset (same as the service name).
-  name: edb-epas-v12-redwood
+  name: edb-epas-12
 spec:
   selector:
     matchLabels:
       # Needs to conform to the label of the statefulset.
-      app: edb-epas12-redwood
+      app: edb-epas12
   # Must point to the name of the service defined earlier.
-  serviceName: edb-epas-v12-redwood
+  serviceName: edb-epas-12
   # Defines the number of pods in the statefulset. Default is 1.
   replicas: 1
   template:
     metadata:
       labels:
         # Use the same label for all parts of the application.
-        app: edb-epas12-redwood
+        app: edb-epas12
     spec:
       # The service account used for deploying the statefulset.
       # The service account should have sufficient permissions.
@@ -136,7 +136,7 @@ spec:
         - name: config-volume
           configMap:
             # Name of configmap where a custom_postgresql.conf will be provided that will include any overrides to default postgresql.conf values
-            name: edb-cli-db-custom-config
+            name: example-custom-pg-config
   volumeClaimTemplates:
     - metadata:
         name: data
