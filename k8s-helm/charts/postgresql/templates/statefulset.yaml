@@ -65,7 +65,7 @@ spec:
               value: {{ .Values.config.archivePath | default "/var/lib/edb/wal_archive" | quote }}
             {{- if .Values.config.customConfigmap }}
             - name: USE_CONFIGMAP
-              value: {{ .Values.config.useConfigmap | default "false" | quote  }}
+              value: "true"
             - name: CUSTOM_CONFIGMAP
               value: {{ .Values.config.customConfigmap }}
             {{- end }}
