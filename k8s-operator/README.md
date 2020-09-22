@@ -117,8 +117,6 @@ Storing the state in a configmap, gives the operator the ability to change the s
 
 ## Deploying with the Operator
 
-Update the value of `<your-pg-secret>` in the example files with the name of secret you created with the database login credentials
-before deploying.
 
 ### Deploying standalone PostgreSQL instances
 
