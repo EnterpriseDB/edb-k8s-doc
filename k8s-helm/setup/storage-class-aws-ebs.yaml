@@ -1,0 +1,13 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: edb-storageclass
+  annotations:
+    storageclass.kubernetes.io/is-default-class: 'false'
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  encrypted: 'true'
+  type: gp2
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
