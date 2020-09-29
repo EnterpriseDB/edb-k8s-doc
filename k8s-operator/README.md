@@ -35,12 +35,14 @@ In summary, the specification for the PostgreSQL or EDB Postgres Advanced Server
 ### Cluster Prerequisites
 1. Obtain access to a Kubernetes cluster.
 
-1. Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for two of the most common public cloud platforms:
+1. Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for common public cloud platforms:
 
    * AWS EBS `kubectl apply -f setup/storage-class-aws-ebs.yaml`
 
    * GCE Persistent Disk `kubectl apply -f setup/storage-class-gce-pd.yaml`
 
+   * Azure Disk `kubectl apply -f setup/storage-class-azure-disk.yaml`
+   
    For additional examples, refer to the [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) documentation provided by Kubernetes.
    
 1. Deploy the customer resource definitions (CRD) by running the following command:
@@ -176,6 +178,61 @@ edb-epas-12-ha-sentinel-54fff448c5-nn4fx    1/1     Running   0         5d21h
 edb-operator-6b4d4494c9-hwpr5               1/1     Running   0         5d21h
 edb-operator-6b4d4494c9-xwkfp               1/1     Running   0         5d21h
 ```
+
+## Using PostgreSQL
+
+After verifying successful deployment to Kubernetes, the PostgreSQL or EDB Postgres Advanced Server containers are ready for use.
+
+### Accessing the deployment using kubectl
+
+1. Open a shell into the container:
+
+   * Standalone PostgreSQL instances
+     ```
+     kubectl exec -it edb-pg-12-0 -n <your-namespace> -- bash
+
+     kubectl exec -it edb-epas-12-0 -n <your-namespace> -- bash
+     ```
+   
+   * High availability PostgreSQL cluster 
+     ```
+     kubectl exec -it edb-pg-12-ha-0 -n <your-namespace> -- bash
+
+     kubectl exec -it edb-epas-12-ha-0 -n <your-namespace> -- bash
+     ```
+1. Log into the database:
+
+   * Standalone PostgreSQL instances
+      ```
+      $PGBIN/psql -d postgres -U enterprisedb
+      ```
+
+   * High availability PostgreSQL cluster 
+      ```
+      $PGBIN/psql -d postgres -U enterprisedb -h edb-pg-12-ha-proxy-service -p 5432
+
+      $PGBIN/psql -d postgres -U enterprisedb -h edb-epas-12-ha-proxy-service -p 5444
+      ```
+   
+### Accessing the deployment from a client application
+
+1. Forward a local port to the database port in the container depending on distribution deployed:
+
+   * Standalone PostgreSQL instances
+      ```
+      kubectl port-forward edb-pg-12 <local-port>:5432 -n <your-namespace>
+
+      kubectl port-forward edb-epas-12 <local-port>:5444 -n <your-namespace>
+      ```
+      
+   * High availability PostgreSQL cluster
+      ```
+      kubectl port-forward edb-pg-12-ha-proxy-service <local-port>:5432 -n <your-namespace>
+
+      kubectl port-forward edb-epas-12-ha-proxy-service <local-port>:5444 -n <your-namespace>
+      ```
+
+1. Access the PostgreSQL database from a client application. For example, pgAdmin can use the localhost address (127.0.0.1 or ::1) and \<local-port\> as referenced in the previous step.
 
 ## Configuration
 
