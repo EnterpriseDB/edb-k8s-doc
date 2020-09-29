@@ -12,11 +12,13 @@ Complete all of the prerequisites before using the Helm charts. The prerequisite
 
 1. Obtain access to a Kubernetes cluster.  
 
-1. Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for two of the most common public cloud platforms:
+1. Create a cluster level storage class to map a platform storage provisioner to `edb-storageclass`. Each platform hosting Kubernetes clusters has their own storage provisioners that are used for persistent volume claims; mapping them to a common name simplifies the deployment examples provided.  The following commands (and example yaml) can be used to define `edb-storageclass` for common public cloud platforms:
 
    * AWS EBS `kubectl apply -f setup/storage-class-aws-ebs.yaml`
 
    * GCE Persistent Disk `kubectl apply -f setup/storage-class-gce-pd.yaml`
+
+   * Azure Disk `kubectl apply -f setup/storage-class-azure-disk.yaml`
 
    For additional examples, refer to the [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) documentation provided by Kubernetes.
    
