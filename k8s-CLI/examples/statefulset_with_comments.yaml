@@ -56,7 +56,7 @@ spec:
       containers:
         - name: edb-database
           # Name of the image to be used for running Postgres
-          image: "quay.io/enterprisedb/postgres12-advanced-server:latest"
+          image: "quay.io/edb/postgres12-advanced-server:latest"
           # Frequency that a new version of the image should be pulled; "Always" will pull on every reschedule.
           imagePullPolicy: Always
           command: ["/bin/bash"]
