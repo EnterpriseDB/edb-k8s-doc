@@ -7,7 +7,18 @@ Complete all of the prerequisite steps before deploying the images using the Doc
 
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop) for Windows/macOS.
 
-1. Verify the Docker Engine version is 1.13 or later using the following command:
+1. (For Windows) perform these additional steps:
+
+   * Install [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)
+   * Launch WSL and login to your Linux (e.g., Ubuntu) instance
+   * Add your user account to the `docker` group using the command:
+      ```
+      sudo gpasswd -a $USER docker
+      ```
+      NOTE: You have to logout and log back in for the command to take effect
+   
+
+1. Verify the Docker Engine (Community) version is 19.03 or later using the following command:
    ```
    docker version
    ```
@@ -71,17 +82,20 @@ The following options are provided as environment variables for Docker deploymen
 
 * EDB Postgres Advanced Server with defaults and persistent data
 
-  * Create local data directory
-      ```
-      mkdir data
-      ```
-   
+  * Create storage volume
+    ```
+    mkdir data
+    docker volume create --driver local --opt type=none --opt device="$(pwd)"/data --opt o=bind pgdata
+    ```
+   For more information on using Storage Volumes, refer to the [Docker](https://docs.docker.com/storage/volumes/) documentation.
+
   * Deploy EDB Postgres Advanced Server container
       ```
       docker run --detach --name edb-postgres \
-      --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v data:/data \
+      --env PG_PASSWORD=mypassword --env PG_INITDB=true --env PGDATA=/data -v pgdata:/data \
       quay.io/edb/postgres-advanced-server-12:latest bash -c '/police.sh && /launch.sh'
       ```
+
 
 ## Deploy using Docker Compose
 
@@ -100,14 +114,13 @@ The following options are provided as environment variables for Docker deploymen
   * Create storage volume
     ```
     mkdir data
-    docker volume create --driver local --opt type=none --opt device=./data --opt o=bind pgdata
+    docker volume create --driver local --opt type=none --opt device="$(pwd)"/data --opt o=bind pgdata
     ```
     
    * Deploy EDB Postgres Advanced Server container   
      ```
      docker-compose -f examples/epas_v12_pgdata.yaml up --detach
      ```
-For more information on using Storage Volumes, refer to the [Docker](https://docs.docker.com/storage/volumes/) documentation.
 
 
 ## Verification
@@ -147,3 +160,20 @@ After verifying successful deployment, the PostgreSQL or EDB Postgres Advanced S
    (1 row)
    ```
    The value will be `postgres` if the database is running with compatibility with PostrgreSQL database (no redwood).
+
+1. If container is deployed with data persistence, you can verify data is preserved using the following steps:
+   
+   *  Delete the container
+      ```
+      docker rm edb-postgres --force
+      ```
+   * Redeploy the container with `PG_INITDB` set to `false`:
+      ```
+      docker run --detach --name edb-postgres \
+      --env PG_PASSWORD=mypassword --env PG_INITDB=false --env PGDATA=/data -v pgdata:/data \
+      quay.io/edb/postgres-advanced-server-12:latest bash -c '/police.sh && /launch.sh'
+      ```
+   * Open a shell into the container, log into the database as previously shown and oonfirm data previously created by running the query:
+      ```
+      postgres=# select * from mytable1;
+      ```
