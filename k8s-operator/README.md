@@ -187,14 +187,14 @@ After verifying successful deployment to Kubernetes, the PostgreSQL or EDB Postg
 
 1. Open a shell into the container:
 
-   * Standalone PostgreSQL instances
+   * Standalone instances (PostgreSQL and EPAS)
      ```
      kubectl exec -it edb-pg-12-0 -n <your-namespace> -- bash
 
      kubectl exec -it edb-epas-12-0 -n <your-namespace> -- bash
      ```
    
-   * High availability PostgreSQL cluster 
+   * High availability cluster (PostgreSQL and EPAS) 
      ```
      kubectl exec -it edb-pg-12-ha-0 -n <your-namespace> -- bash
 
@@ -202,12 +202,14 @@ After verifying successful deployment to Kubernetes, the PostgreSQL or EDB Postg
      ```
 1. Log into the database:
 
-   * Standalone PostgreSQL instances
+   * Standalone instances (PostgreSQL and EPAS)
       ```
-      $PGBIN/psql -d postgres -U enterprisedb
+      $PGBIN/psql -d postgres -U enterprisedb -h edb-pg-12 -p 5432
+
+      $PGBIN/psql -d postgres -U enterprisedb -h edb-epas-12 -p 5444
       ```
 
-   * High availability PostgreSQL cluster 
+   * High availability cluster (PostgreSQL and EPAS)
       ```
       $PGBIN/psql -d postgres -U enterprisedb -h edb-pg-12-ha-proxy-service -p 5432
 
@@ -218,14 +220,14 @@ After verifying successful deployment to Kubernetes, the PostgreSQL or EDB Postg
 
 1. Forward a local port to the database port in the container depending on distribution deployed:
 
-   * Standalone PostgreSQL instances
+   * Standalone instances (PostgreSQL and EPAS)
       ```
       kubectl port-forward edb-pg-12 <local-port>:5432 -n <your-namespace>
 
       kubectl port-forward edb-epas-12 <local-port>:5444 -n <your-namespace>
       ```
       
-   * High availability PostgreSQL cluster
+   * High availability cluster (PostgreSQL and EPAS)
       ```
       kubectl port-forward edb-pg-12-ha-proxy-service <local-port>:5432 -n <your-namespace>
 
@@ -353,3 +355,144 @@ _All steps assume user has access to the Openshift GUI and kubectl in the termin
    kubectl delete configmap  -l owner=edb-operator -n <your-namespace>
    ```
 
+
+## Debugging
+
+### Useful Commands
+
+* Check current state of a k8s object:
+   ```
+   kubectl describe pod edb-epas-12-ha-0 -n <your-namespace>
+   
+   ```
+* Check logs of deployed container:
+   ```
+   kubectl logs edb-epas-12-ha-0 -n <your-namespace>
+   
+   ```
+* Enable application debugging of container by setting the `podDebug` property to `true` in the deployment yaml:
+   ```
+       podDebug: "true"
+   
+   ```
+* Get a dump of application (database) logs of deployed container:
+   ```
+   kubectl cp edb-epas-12-ha-0:/var/lib/edb/data/postgres/log ./ -n <your-namespace>
+   
+   ```
+
+
+
+### Sample Scenarios
+
+#### Pod in `ImagePullBackOff` status
+
+In this scenario, output of `kubectl get pods -n <your-namespace>` shows the following output:
+
+```
+NAME                           READY   STATUS              RESTARTS   AGE
+edb-epas-12-ha-0               0/1     ErrImagePull        0          26s
+edb-epas-12-ha-0               0/1     ImagePullBackOff    0          27s
+```
+
+Debug Steps:
+
+1. Run the command `kubectl describe pod edb-epas-12-ha-0 -n <your-namespace>` to find the image name. Sample output shown below:
+
+   ```
+   Containers:
+     edb:
+       Container ID:
+       Image:         quay.io/edb/postgres-advanced-server-12:latest
+
+   ...
+   ...
+
+   Events:
+     Type     Reason            Age        From                                               Message
+     ----     ------            ----       ----                                               -------       
+
+
+     Warning  Failed            3m38s      kubelet, ip-10-0-160-9.us-east-2.compute.internal  Failed to pull image "quay.io/edb/postgres-advanced-server-12:latest": [rpc error: code = Unknown desc = unable to retrieve auth token: invalid username/password: unauthorized: Invalid Username or Password, rpc error: code = Unknown desc = Error reading manifest latest in quay.io/edb/postgres-advanced-server-12: unauthorized: access to the requested resource is not authorized]
+   ```
+
+1. Verify that you are able to download the image  `quay.io/edb/postgres-advanced-server-12:latest` using your quay.io registry credentials:
+   ```
+   docker login quay.io -u <your-quay.io-username> -p <your-quay.io-password>
+
+   docker pull quay.io/edb/postgres-advanced-server-12:latest
+   ```
+
+1. If the above step is unsuccessful contact EDB for support. Otherwise, delete and recreate the registry secret `quay-regsecret` with your verified quay.io credentials:
+
+   ```
+   kubectl delete secret quay-regsecret -n <your-namespace>
+
+   kubectl create secret docker-registry quay-regsecret --docker-server=quay.io \
+   --docker-username=<your-quay.io-username> --docker-password=<your-quay.io-password> --docker-email=<your-email> \
+   -n <your-namespace> 
+   ```
+
+1. Delete deployment and redeploy
+
+
+#### Pod in `Pending` status
+
+In this scenario, output of `kubectl get pods -n <your-namespace>` shows the following output:
+
+```
+NAME                            READY   STATUS    RESTARTS   AGE
+edb-epas-12-ha-0                0/1     Pending   0          53s
+```
+
+Debug Steps:
+
+1. Run the command `kubectl describe pod edb-epas-12-ha-0 -n <your-namespace>`. Sample output shown below:
+
+   ```
+   Containers:
+     edb:
+       Container ID:
+       Image:         quay.io/edb/postgres-advanced-server-12:latest
+   ...
+   ...
+
+   Events:
+     Type     Reason            Age        From                           Message
+     ----     ------            ----       ----                           -------       
+
+       Warning  FailedScheduling  76s (x4 over 2m27s)  default-scheduler  pod has unbound immediate PersistentVolumeClaims (repeated 3 times)
+   ```
+
+1. Get details of `edb-storageclass` storage class:
+   ```
+   kubectl get sc edb-storageclass -o yaml
+   ```
+
+   Sample output (for AWS EBS based storage class) shown below if the `edb-storageclass` storage class exists:
+
+   ```
+   allowVolumeExpansion: true
+   apiVersion: storage.k8s.io/v1
+   kind: StorageClass
+   metadata:
+     annotations:
+       kubectl.kubernetes.io/last-applied-configuration: |
+         {"allowVolumeExpansion":true,"apiVersion":"storage.k8s.io/v1","kind":"StorageClass","metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"false"},"name":"edb-storageclass"},"parameters":{"encrypted":"true","type":"gp2"},"provisioner":"kubernetes.io/aws-ebs","reclaimPolicy":"Delete","volumeBindingMode":"Immediate"}
+       storageclass.kubernetes.io/is-default-class: "false"
+     creationTimestamp: "2020-09-01T19:28:02Z"
+     name: edb-storageclass
+     resourceVersion: "100235187"
+     selfLink: /apis/storage.k8s.io/v1/storageclasses/edb-storageclass
+     uid: 59f4a541-20bd-4593-a8e8-5a972cd611bb
+   parameters:
+     encrypted: "true"
+     type: gp2
+   provisioner: kubernetes.io/aws-ebs
+   reclaimPolicy: Delete
+   volumeBindingMode: Immediate
+   ```
+
+1. If the storage class exists, verify the `provisioner` is correct for your environment. Otherwise, create the storage class based on the provisioner for your environment as described in the [Prerequisites](#prerequisites) section.
+
+1. Delete deployment and redeploy

@@ -7,21 +7,20 @@ Please read the [EDB Architecture and Requirements](architecture.md) to understa
 * [Cluster Specification](cluster_spec.md)
 * [Cluster Initialization](initialization.md)
 * [Setting instance parameters](postgres_parameters.md)
-* [Setting postgres superuser credentials](../../doc/postgres_superuser_credentials.md)
+* [Setting postgres superuser credentials](postgres_superuser_credentials.md)
 * [Custom postgresql.conf entries](custom_postgresql_conf_entries.md)
-* [Stolon Client](stolonctl.md)
+* [Stolon Client](https://github.com/EnterpriseDB/edb-stolon/blob/master/doc/stolonctl.md)
 * Backup/Restore
-  * [Point In Time Recovery](pitr.md)
-  * [Point In Time Recovery with wal-e](pitr_wal-e.md)
-  * [Point In Time Recovery with wal-g](pitr_wal-g.md)
+  * [Database Backup](backup.md)
+  * [Database Recovery](recovery.md)
 * [Standby Cluster](standbycluster.md)
 
 ### Misc topics
 
+* [High Availability](high_availability.md)
 * [Enabling pg_rewind](pg_rewind.md)
 * [Enabling synchronous replication](syncrepl.md)
 * [PostgreSQL SSL/TLS setup](ssl.md)
-* [Forcing a failover](forcefailover.md)
 * [Service Discovery](service_discovery.md)
 
 ### Recipes
