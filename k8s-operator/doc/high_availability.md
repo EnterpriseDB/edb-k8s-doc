@@ -20,10 +20,11 @@ The deployment defaulted to asynchronous streaming replication because synchrono
 
 
 ```
-NAME                      READY    STATUS     RESTARTS   AGE
-edb-epas-12-ha-0          1/1      Running    0          3m20s
-edb-epas-12-ha-1          1/1      Running    0          2m19s
-edb-epas-12-ha-2          1/1      Running    0          72s
+$ kubectl get pods -l edb=db -o wide -n <your-namespace>
+NAME               READY   STATUS    RESTARTS   AGE     IP             NODE                                         NOMINATED NODE   READINESS GATES
+edb-epas-12-ha-0   1/1     Running   0          4m43s   10.128.2.147   ip-10-0-157-80.us-east-2.compute.internal    <none>           <none>
+edb-epas-12-ha-1   1/1     Running   0          3m37s   10.130.2.123   ip-10-0-160-9.us-east-2.compute.internal     <none>           <none>
+edb-epas-12-ha-2   1/1     Running   0          2m45s   10.131.0.128   ip-10-0-143-128.us-east-2.compute.internal   <none>           <none>
 ```
 
 
@@ -44,23 +45,13 @@ A query against the Primary (edb-epas-12-ha-0) against the dynamic pg_stat_repli
 
 
 ```
-edb=# select usename, client_addr, application_name, state, sync_state from pg_stat_replication;
-
--[ RECORD 1 ]----+----------------
-usename      	| replication
-client_addr  	| 10.128.4.140
-application_name  | stolon_6f606125
-state        	| streaming
-sync_state   	| async
-
--[ RECORD 2 ]----+----------------
-usename      	| replication
-client_addr  	| 10.128.7.53
-application_name  | stolon_e87b5901
-state        	| streaming
-sync_state   	| async
+postgres=# select usename, client_addr, application_name, state, sync_state from pg_stat_replication;
+   usename   | client_addr  | application_name |   state   | sync_state
+-------------+--------------+------------------+-----------+------------
+ replication | 10.130.2.123 | stolon_0f909e4d  | streaming | async
+ replication | 10.131.0.128 | stolon_b8b392b6  | streaming | async
+(2 rows)
 ```
-
 
 
 ### Stolon Keeper
@@ -69,11 +60,11 @@ Among the processes inside each Database container is a process named edb-stolon
 
 
 ```
-$ kubectl logs -f edb-epas-11-0
+$ kubectl logs -f edb-epas-12-ha-0 -n <your-namespace>
 2020-08-27T16:23:48.093Z    INFO    cmd/keeper.go:1476    our db requested role is master
 2020-08-27T16:23:48.094Z    INFO    cmd/keeper.go:1512    already master
 
-$ kubectl logs -f edb-epas-11-1
+$ kubectl logs -f edb-epas-12-ha-1 -n <your-namespace>
 2020-08-27T16:25:25.697Z    INFO    cmd/keeper.go:1526    our db requested role is standby    {"followedDB": "546fac43"}
 2020-08-27T16:25:25.697Z    INFO    cmd/keeper.go:1545    already standby
 ```
@@ -114,18 +105,18 @@ edb-epas-12-ha-proxy-5c494bf44-tjhcn    1/1    Running   0         3m43s
 
 ## Adding Replicas 
 
-Adding additional replicas to a PostgreSQL deployment only requires modifying the clusterSize in the CR and applying the configuration: 
+Adding additional replicas to a PostgreSQL deployment only requires modifying the clusterSize in the [CR yaml](../examples/epas-12-ha.yaml) and applying the configuration: 
 
 ```
 spec:
   clusterSize: 5
 ```
 ```
-$ kubectl apply -f edb-epas12-ha.yaml
+$ kubectl apply -f ../examples/epas-12-ha.yaml -n <your-namespace>
 ```
 
 
-Running `kubectl get pods` will show the newly created replicas. Here the number of replicas was scaled from 3 to 5 and two additional replicas were created: 
+Running `kubectl get pods -l edb=db -n <your-namespace>` will show the newly created replicas. Here the number of replicas was scaled from 3 to 5 and two additional replicas were created: 
 
 
 ```
@@ -141,12 +132,11 @@ edb-epas-12-ha-4           1/1 	  Running     0         2m
 
 ## Synchronous Replication 
 
-To deploy an HA cluster with Synchronous Replication between the Primary and Standbys, update the CR with synchronousReplication set to true. Minimum and maximum number of synchronous Standbys can be defined as well. 
+To deploy an HA cluster with Synchronous Replication between the Primary and Standbys, update the [CR yaml](../examples/epas-12-ha.yaml) with synchronousReplication set to true. Minimum and maximum number of synchronous Standbys can be defined as well. 
 
 Here is a sample configuration for Synchronous Replication: 
 
 ```
-
 spec:
   clusterSize: 5
   
@@ -193,7 +183,7 @@ In this example, there is 1 Primary (edb-epas-12-ha-0) and 2 Hot Standbys (edb-e
 
 
 ```
-$ kubectl get pods
+$ kubectl get pods -n <your-namespace>
 NAME                                        READY  STATUS    RESTARTS  AGE
 edb-operator-7f9cc47678-wrsg7               1/1    Running   0         16h
 edb-operator-7f9cc47678-xsf58               1/1    Running   0         16h
@@ -209,15 +199,13 @@ edb-epas-12-ha-sentinel-78bdfbd5cc-ssc7z    1/1    Running   0         6m44s
 ```
 
 
-A Failover is forced by adding the operationAction HA_FORCE_FAILOVER to the CR and then applying the configuration. 
+A Failover is forced by adding the operationAction HA_FORCE_FAILOVER to the [CR yaml](../examples/epas-12-ha.yaml) and then applying the configuration. 
 
 
 ```
  operatorAction:
    action: HA_FORCE_FAILOVER
 ```
-
-
 
 ## Failover
 
@@ -227,7 +215,7 @@ There are 3 Database containers running: edb-epas-12-ha-0 is the Primary and edb
 
 
 ```
-$ kubectl get pods
+$ kubectl get pods -n <your-namespace>
 
 NAME                                     READY  STATUS    RESTARTS  AGE
 edb-epas-12-ha-0                         1/1    Running   0         8m26s
@@ -248,7 +236,7 @@ For demonstration purposes, the Primary is deleted
 
 
 ```
-$ kubectl delete pod edb-epas-12-ha-0
+$ kubectl delete pod edb-epas-12-ha-0 -n <your-namespace>
 
 pod "edb-epas-12-ha-0" deleted
 ```
@@ -258,7 +246,7 @@ The Kubernetes API shows that two Database containers are running and a 3rd is b
 
 
 ```
-$ kubectl get pods
+$ kubectl get pods -l edb=db -n <your-namespace>
 NAME                                READY  STATUS              RESTARTS   AGE
 edb-epas-12-ha-0                    0/1    ContainerCreating   0          4s
 edb-epas-12-ha-1                    1/1    Running             0          8m51s
@@ -297,5 +285,30 @@ server signaled
 2020-09-01T01:55:19.172Z    INFO    cmd/keeper.go:980    creating replication slot    {"slot": "stolon_e2a10ff6"}
 ```
 
+After the failover has completed, the Kubernetes API shows the following:
 
-Querying PostgreSQL on the new primary confirms the two Standbys are now receiving changes from newly promoted edb-epas-12-ha-1: 
+```
+$ kubectl get pods -l edb=db -o wide -n <your-namespace>
+NAME               READY   STATUS    RESTARTS   AGE   IP             NODE                                         NOMINATED NODE   READINESS GATES
+edb-epas-12-ha-0   1/1     Running   0          12m   10.128.2.144   ip-10-0-157-80.us-east-2.compute.internal    <none>           <none>
+edb-epas-12-ha-1   1/1     Running   0          22m   10.129.3.31    ip-10-0-166-73.us-east-2.compute.internal    <none>           <none>
+edb-epas-12-ha-2   1/1     Running   0          21m   10.131.0.125   ip-10-0-143-128.us-east-2.compute.internal   <none>           <none>
+``` 
+
+
+Querying PostgreSQL on the new primary confirms that edb-epas-12-ha-1 is the new primary and the two Standbys are now receiving changes from newly promoted edb-epas-12-ha-1: 
+
+```
+postgres=# select pg_is_in_recovery();
+ pg_is_in_recovery
+-------------------
+ f
+(1 row)
+
+postgres=# select usename, client_addr, application_name, state, sync_state from pg_stat_replication;
+   usename   | client_addr  | application_name |   state   | sync_state
+-------------+--------------+------------------+-----------+------------
+ replication | 10.131.0.125 | stolon_6b559328  | streaming | async
+ replication | 10.128.2.144 | stolon_5ed0f867  | streaming | async
+(2 rows)
+```

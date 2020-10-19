@@ -12,7 +12,7 @@ Please read the [EDB Architecture and Requirements](architecture.md) to understa
 * [Stolon Client](https://github.com/EnterpriseDB/edb-stolon/blob/master/doc/stolonctl.md)
 * Backup/Restore
   * [Database Backup](backup.md)
-  * [Database Recovery](recovery.md)
+  * [Database Restore](restore.md)
 * [Standby Cluster](standbycluster.md)
 
 ### Misc topics

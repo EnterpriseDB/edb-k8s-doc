@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: edb-operator
 spec:
-  replicas: 2
+  replicas: 2 
   selector:
     matchLabels:
       name: edb-operator
@@ -15,9 +15,13 @@ spec:
       serviceAccountName: edb-operator
       containers:
         - name: edb-operator
+          # Replace this with the built image name
           image: quay.io/edb/edb-operator:latest
           command:
-          - edb-operator
+            - edb-operator
+          args:
+            - "--metrics-addr=127.0.0.1:8080"
+            - "--enable-leader-election"
           imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
@@ -34,20 +38,28 @@ spec:
             httpGet:
               path: /alive
               port: 8081
+              scheme: HTTP
             initialDelaySeconds: 10
+            timeoutSeconds: 5
             periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8081
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          # readinessProbe:
+          #   httpGet:
+          #     path: /ready
+          #     port: 8081
+          #     scheme: HTTP
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 5
+          #   periodSeconds: 10
+          #   successThreshold: 1
+          #   failureThreshold: 3
           resources:
             limits:
               cpu: 500m
-              memory: 128Mi
+              memory: 500Mi
             requests:
               cpu: 100m
-              memory: 20Mi
+              memory: 100Mi
       imagePullSecrets:
-        - name: quay-regsecret
+        - name: quay-regsecret # This should be replace by the docker repository secret to pull the image
