@@ -82,7 +82,14 @@ The following options are provided as environment variables for Docker deploymen
 
 * EDB Postgres Advanced Server with defaults and persistent data
 
-  * Create storage volume
+  * Delete storage volume `pgdata` in case it already exists
+
+    ```
+    docker volume rm pgdata
+    ```
+
+  * Create storage volume `pgdata`
+
     ```
     mkdir data
     docker volume create --driver local --opt type=none --opt device="$(pwd)"/data --opt o=bind pgdata
@@ -111,7 +118,14 @@ The following options are provided as environment variables for Docker deploymen
 
 * EDB Postgres Advanced Server with defaults and persistent data
 
-  * Create storage volume
+  * Delete storage volume `pgdata` in case it already exists
+
+    ```
+    docker volume rm pgdata
+    ```
+
+  * Create storage volume `pgdata`
+  
     ```
     mkdir data
     docker volume create --driver local --opt type=none --opt device="$(pwd)"/data --opt o=bind pgdata
